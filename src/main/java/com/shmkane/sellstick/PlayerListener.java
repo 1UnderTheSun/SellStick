@@ -6,6 +6,7 @@ import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.Configs.StickConfig.SellingInterface;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.exception.player.PlayerDataNotLoadedException;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,8 +38,7 @@ public class PlayerListener implements Listener {
     /**
      * Instance of the plugin
      **/
-    private final SellStick plugin;
-
+    SellStick plugin = SellStick.getPlugin(SellStick.class);
     /**
      * Construct object, pass instance of SellStick
      *
@@ -122,9 +122,9 @@ public class PlayerListener implements Listener {
         try {
             min = hold.get(0);
         } catch (Exception ex) {
-            SellStick.log.severe(StickConfig.instance.durabilityLine + "");
-            SellStick.log.severe("The problem seems to be that your sellstick useline number has changed.");
-            SellStick.log.severe(ex.toString());
+            plugin.log("SEVERE",StickConfig.instance.durabilityLine + "");
+            plugin.log("SEVERE","The problem seems to be that your sellstick useline number has changed.");
+            plugin.log("SEVERE",ex.toString());
         }
 
         for (int i = 0; i < hold.size(); i++) {
@@ -193,7 +193,7 @@ public class PlayerListener implements Listener {
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
         } catch (Exception ex) {
-            SellStick.log.severe("Invalid SellStick item set in config.");
+            plugin.log("SEVERE","Invalid SellStick item set in config.");
             return false;
         }
 
@@ -215,7 +215,7 @@ public class PlayerListener implements Listener {
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
         } catch (Exception ex) {
-            SellStick.log.severe("Invalid SellStick item set in config.");
+            plugin.log("SEVERE","Invalid SellStick item set in config.");
             return false;
         }
 
@@ -244,21 +244,21 @@ public class PlayerListener implements Listener {
         }
         if (uses == -2) {
             // This should honestly never happen unless someone changes sellstick lores
-            plugin.msg(p, ChatColor.RED + "There was an error!");
-            plugin.msg(p, ChatColor.RED + "Please let an admin know to check console, or, send them these messages:");
+            plugin.msg(p, NamedTextColor.RED + "There was an error!");
+            plugin.msg(p, NamedTextColor.RED + "Please let an admin know to check console, or, send them these messages:");
 
             plugin.msg(p,
-                    ChatColor.RED + "Player has a sellstick that has had its 'DurabilityLine' changed in the config");
-            plugin.msg(p, ChatColor.RED
+                    NamedTextColor.RED + "Player has a sellstick that has had its 'DurabilityLine' changed in the config");
+            plugin.msg(p, NamedTextColor.RED
                     + "For this reason, the plugin could not find the line number on which the finite/infinite lore exists");
-            plugin.msg(p, ChatColor.RED + "This can be resolved by either:");
-            plugin.msg(p, ChatColor.RED + "1: Giving the player a new sellstick");
-            plugin.msg(p, ChatColor.RED + "(Includes anyone on the server that has this issue)");
-            plugin.msg(p, ChatColor.RED + "or");
-            plugin.msg(p, ChatColor.RED + "2: Changing the DurabilityLine to match the one that is on this sellstick");
+            plugin.msg(p, NamedTextColor.RED + "This can be resolved by either:");
+            plugin.msg(p, NamedTextColor.RED + "1: Giving the player a new sellstick");
+            plugin.msg(p, NamedTextColor.RED + "(Includes anyone on the server that has this issue)");
+            plugin.msg(p, NamedTextColor.RED + "or");
+            plugin.msg(p, NamedTextColor.RED + "2: Changing the DurabilityLine to match the one that is on this sellstick");
 
-            plugin.msg(p, ChatColor.RED + "For help, contact shmkane on spigot or github");
-            plugin.msg(p, ChatColor.RED + "But shmkane will just tell you to do one of the above options.");
+            plugin.msg(p, NamedTextColor.RED + "For help, contact shmkane on spigot or github");
+            plugin.msg(p, NamedTextColor.RED + "But shmkane will just tell you to do one of the above options.");
 
         }
         return uses;
@@ -283,8 +283,8 @@ public class PlayerListener implements Listener {
         SellingInterface si = StickConfig.instance.getSellInterface();
 
         if (StickConfig.instance.debug) {
-            SellStick.log.warning("1-Getting prices from " + si);
-            SellStick.log.warning("2-Clicked Chest(size=" + c.getInventory().getSize() + "):");
+            plugin.log("WARNING","1-Getting prices from " + si);
+            plugin.log("WARNING","2-Clicked Chest(size=" + c.getInventory().getSize() + "):");
         }
 
         for (int i = 0; i < c.getInventory().getSize(); i++) {
@@ -314,8 +314,8 @@ public class PlayerListener implements Listener {
 
                         if (StickConfig.instance.debug) {
                             if (price > 0) {
-                                SellStick.log.warning(contents[i].getType() + " x " + contents[i].getAmount());
-                                SellStick.log.warning("-Price: " + price);
+                                plugin.log("WARNING",contents[i].getType() + " x " + contents[i].getAmount());
+                                plugin.log("WARNING","-Price: " + price);
                             }
                         }
 
@@ -328,13 +328,13 @@ public class PlayerListener implements Listener {
 
                         if (StickConfig.instance.debug) {
                             if (price > 0)
-                                SellStick.log.warning("-Price: " + price);
-                            SellStick.log.warning(contents[i].getType() + " x " + contents[i].getAmount());
+                                plugin.log("WARNING","-Price: " + price);
+                                plugin.log("WARNING",contents[i].getType() + " x " + contents[i].getAmount());
                         }
 
 
                     } catch (Exception exception) {
-                        SellStick.log.warning("Something went wrong enabling Essentials. If you don't use it, you can ignore this message.");
+                        plugin.log("WARNING", "Something went wrong enabling Essentials. If you don't use it, you can ignore this message.");
                     }
 
                 } else if (si == SellingInterface.SHOPGUI) {
@@ -347,14 +347,14 @@ public class PlayerListener implements Listener {
 
                     if (StickConfig.instance.debug) {
                         if (price > 0)
-                            SellStick.log.warning("-Price: " + price);
-                        SellStick.log.warning(contents[i].getType() + " x " + contents[i].getAmount());
+                            plugin.log("WARNING","-Price: " + price);
+                            plugin.log("WARNING",contents[i].getType() + " x " + contents[i].getAmount());
                     }
 
                 }
 
                 if (StickConfig.instance.debug) {
-                    SellStick.log.warning("--Price of (" + contents[i].getType() + "): " + price);
+                    plugin.log("WARNING","--Price of (" + contents[i].getType() + "): " + price);
                 }
 
                 int amount;
@@ -375,18 +375,18 @@ public class PlayerListener implements Listener {
 
                 if (StickConfig.instance.debug) {
                     if (!(ex instanceof NullPointerException))
-                        SellStick.log.warning(ex.toString());
+                        plugin.log("WARNING", ex.toString());
                 }
 
                 if (si == SellingInterface.SHOPGUI && ex instanceof PlayerDataNotLoadedException) {
-                    SellStick.log.severe("Player should relog to fix this.");
+                    plugin.log("SEVERE","Player should relog to fix this.");
                     e.getPlayer().sendMessage(ChatColor.DARK_RED + "Please re-log to use SellStick.");
                     return 0;
                 }
             }
             if (StickConfig.instance.debug && slotPrice > 0) {
-                SellStick.log.warning("---slotPrice=" + slotPrice);
-                SellStick.log.warning("---total=" + total);
+                plugin.log("WARNING","---slotPrice=" + slotPrice);
+                plugin.log("WARNING","---total=" + total);
             }
             total += slotPrice;
             slotPrice = 0;
@@ -464,7 +464,7 @@ public class PlayerListener implements Listener {
                         .replace("%price%", plugin.getEcon().format(r.amount)));
             }
 
-            SellStick.log.info(p.getName() + " sold items via sellstick for " + r.amount + " and now has " + r.balance);
+            plugin.log("INFO",p.getName() + " sold items via sellstick for " + r.amount + " and now has " + r.balance);
         } else {
             plugin.msg(p, String.format("An error occured: %s", r.errorMessage));
         }

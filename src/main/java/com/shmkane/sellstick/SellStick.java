@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -17,15 +17,15 @@ import java.util.logging.Logger;
  *
  * @author shmkane
  */
+
 public class SellStick extends JavaPlugin {
 
-    /**
-     * Server logger
-     **/
-    public static final Logger log = Logger.getLogger("Minecraft");
+
+
     /**
      * Instance of Vault Economy
      **/
+
     private static Economy econ = null;
 
     /**
@@ -41,16 +41,19 @@ public class SellStick extends JavaPlugin {
     public void onEnable() {
 
         if (!setupEconomy()) {
-            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            this.log("SEVERE",(String.format("[%s] - Disabled due to no Vault dependency found!")));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         setupEssentials();
 
+        /**
+         * Check Soft Dependencies
+         */
         if (Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus")) {
             if (!StickConfig.instance.useShopGUI) {
-                log.warning(String.format("[%s] ShopGUI+ was found but not enabled in the config!", getDescription().getName()));
+                this.log("WARNING", String.format("[%s] ShopGUI+ was found but not enabled in the config!"));
             }
         }
 
@@ -68,13 +71,13 @@ public class SellStick extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        log.warning(String.format("[%s] - Attempting to disabling...", getDescription().getName()));
+        this.log("WARNING",(String.format("[%s] - Attempting to disabling...")));
         try {
             econ = null;
         } catch (Exception ex) {
-            log.severe(String.format("[%s] - Was not disabled correctly!", getDescription().getName()));
+            this.log("SEVERE",(String.format("[%s] - Was not disabled correctly!")));
         } finally {
-            log.warning(String.format("[%s] - Attempt complete!", getDescription().getName()));
+            this.log("WARNING",(String.format("[%s] - Attempt complete!")));
         }
     }
 
@@ -85,23 +88,21 @@ public class SellStick extends JavaPlugin {
 
         try {
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
-                log.info(String.format("[%s] Essentials was found", getDescription().getName()));
+                this.log("Level.INFO",(String.format("[%s] Essentials was found")));
                 Essentials ess = Essentials.getPlugin(Essentials.class);
-
                 if (StickConfig.instance.useEssentialsWorth) {
                     if (ess == null) {
-                        log.warning(String.format("[%s] Trying to use essentials worth but essentials not found!",
-                                getDescription().getName()));
+                        this.log("WARNING",(String.format("[%s] Trying to use essentials worth but essentials not found!")));
                     } else {
-                        log.info(String.format("[%s] Using essentials worth!", getDescription().getName()));
+                        this.log("INFO",String.format("[%s] Using essentials worth!"));
                     }
                 }
             }else{
-                log.warning(String.format("[%s] Essentials not found", getDescription().getName()));
+                this.log("WARNING",(String.format("[%s] Essentials not found")));
             }
         } catch (Exception ex) {
-            log.warning("Something went wrong enabling Essentials. If you don't use it, you can ignore this message:");
-            log.warning(ex.getMessage());
+            this.log("WARNING", String.format("Something went wrong enabling Essentials. If you don't use it, you can ignore this message:"));
+            this.log("WARNING",(ex.getMessage()));
         }
     }
 
@@ -130,7 +131,6 @@ public class SellStick extends JavaPlugin {
     public Economy getEcon() {
         return SellStick.econ;
     }
-
     /**
      * This will send a player a message. If message is empty, it wont send
      * anything.
@@ -144,6 +144,23 @@ public class SellStick extends JavaPlugin {
         }
 
         sender.sendMessage(StickConfig.instance.prefix + msg);
+    }
+
+    /**
+     * Server logger
+     **/
+    public void log(String string) {
+        getLogger().log(Level.INFO, string);
+    }
+
+    public void log(String level, String string) {
+        Level l = Level.INFO;
+        switch(level) {
+            case "WARNING": l = Level.WARNING; break;
+            case "SEVERE": l = Level.SEVERE; break;
+            case "ALL": l = Level.ALL; break;
+        }
+        getLogger().log(l, string);
     }
 
 }
