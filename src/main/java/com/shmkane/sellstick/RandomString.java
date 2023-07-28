@@ -8,13 +8,13 @@ public class RandomString {
 
     private static final char[] symbols;
 
-    /**
-     * Just generates random color code combinations Only symbols 0-9 and a-f (for
-     * color codes)
-     *
-     * This is used so I can make an invisible message. Purpose being, items don't
-     * stack unless their metadata is the same. By having random(invisible) codes
-     * SellSticks will never stack
+    /*
+      Just generates random color code combinations Only symbols 0-9 and a-f (for
+      color codes)
+
+      This is used so I can make an invisible message. Purpose being, items don't
+      stack unless their metadata is the same. By having random(invisible) codes
+      SellSticks will never stack
      */
     static {
         StringBuilder tmp = new StringBuilder();
@@ -63,11 +63,11 @@ public class RandomString {
      */
     public String makeInvis(String original) {
         char[] letters = original.toCharArray();
-        String newLetters = "";
+        StringBuilder newLetters = new StringBuilder();
         for (int i = 0; i < original.length(); i++) {
-            newLetters += ChatColor.getByChar(letters[i]);
+            newLetters.append(ChatColor.getByChar(letters[i]));
 
         }
-        return newLetters;
+        return newLetters.toString();
     }
 }

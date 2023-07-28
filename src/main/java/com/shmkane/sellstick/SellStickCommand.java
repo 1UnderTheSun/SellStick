@@ -29,8 +29,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
     /**
      * Instance of the plugin
      **/
-    private SellStick plugin;
-
+    private final SellStick plugin;
     /**
      * Constructor of SellStickCommand Only one of these should be constructed in
      * the onEnable of SellStick.java
@@ -108,9 +107,9 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                         }
 
                         for (int i = 0; i < numSticks; i++) {
-                            /**
-                             * This assigns a random string to the item meta so that the item cannot be
-                             * stacked
+                            /*
+                              This assigns a random string to the item meta so that the item cannot be
+                              stacked
                              */
                             RandomString random = new RandomString(5);
                             String UUID = random.nextString();

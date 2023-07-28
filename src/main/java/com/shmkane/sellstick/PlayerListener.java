@@ -11,7 +11,6 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,8 +21,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +35,7 @@ public class PlayerListener implements Listener {
     /**
      * Instance of the plugin
      **/
-    SellStick plugin = SellStick.getPlugin(SellStick.class);
+    private SellStick plugin;
     /**
      * Construct object, pass instance of SellStick
      *

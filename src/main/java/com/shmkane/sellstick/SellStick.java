@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * SellStick is a MC plugin that allows customizable selling of
@@ -19,8 +18,6 @@ import java.util.logging.Logger;
  */
 
 public class SellStick extends JavaPlugin {
-
-
 
     /**
      * Instance of Vault Economy
@@ -41,19 +38,19 @@ public class SellStick extends JavaPlugin {
     public void onEnable() {
 
         if (!setupEconomy()) {
-            this.log("SEVERE",(String.format("[%s] - Disabled due to no Vault dependency found!")));
+            this.log("SEVERE","[%s] - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         setupEssentials();
 
-        /**
-         * Check Soft Dependencies
+        /*
+          Check Soft Dependencies
          */
         if (Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus")) {
             if (!StickConfig.instance.useShopGUI) {
-                this.log("WARNING", String.format("[%s] ShopGUI+ was found but not enabled in the config!"));
+                this.log("WARNING", "[%s] ShopGUI+ was found but not enabled in the config!");
             }
         }
 
@@ -71,13 +68,13 @@ public class SellStick extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        this.log("WARNING",(String.format("[%s] - Attempting to disabling...")));
+        this.log("WARNING","[%s] - Attempting to disabling...");
         try {
             econ = null;
         } catch (Exception ex) {
-            this.log("SEVERE",(String.format("[%s] - Was not disabled correctly!")));
+            this.log("SEVERE","[%s] - Was not disabled correctly!");
         } finally {
-            this.log("WARNING",(String.format("[%s] - Attempt complete!")));
+            this.log("WARNING","[%s] - Attempt complete!");
         }
     }
 
@@ -88,20 +85,20 @@ public class SellStick extends JavaPlugin {
 
         try {
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
-                this.log("Level.INFO",(String.format("[%s] Essentials was found")));
+                this.log("Level.INFO","[%s] Essentials was found");
                 Essentials ess = Essentials.getPlugin(Essentials.class);
                 if (StickConfig.instance.useEssentialsWorth) {
                     if (ess == null) {
-                        this.log("WARNING",(String.format("[%s] Trying to use essentials worth but essentials not found!")));
+                        this.log("WARNING","[%s] Trying to use essentials worth but essentials not found!");
                     } else {
-                        this.log("INFO",String.format("[%s] Using essentials worth!"));
+                        this.log("INFO","[%s] Using essentials worth!");
                     }
                 }
             }else{
-                this.log("WARNING",(String.format("[%s] Essentials not found")));
+                this.log("WARNING","[%s] Essentials not found");
             }
         } catch (Exception ex) {
-            this.log("WARNING", String.format("Something went wrong enabling Essentials. If you don't use it, you can ignore this message:"));
+            this.log("WARNING", "Something went wrong enabling Essentials. If you don't use it, you can ignore this message:");
             this.log("WARNING",(ex.getMessage()));
         }
     }

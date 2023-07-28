@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
+import org.bukkit.ChatColor;
 import com.shmkane.sellstick.SellStick;
 
 /**
@@ -116,7 +116,6 @@ public class StickConfig {
      */
     public void loadValues() {
         FileConfiguration config = YamlConfiguration.loadConfiguration(this.conf);
-
         this.name = ChatColor.translateAlternateColorCodes('&', config.getString("DisplayName"));
         this.item = ChatColor.translateAlternateColorCodes('&', config.getString("ItemType").toUpperCase());
         this.glow = config.getBoolean("Glow");
