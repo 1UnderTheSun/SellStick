@@ -7,12 +7,10 @@ import java.util.logging.Level;
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.Utilities.ItemUtils;
 import com.shmkane.sellstick.Utilities.ChatUtils;
+import com.shmkane.sellstick.Utilities.RandomString;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -23,14 +21,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Handles the /sellstick Command
- *
- * @author shmkane
- */
 public class SellStickCommand implements CommandExecutor, TabExecutor {
 
     @Override
@@ -57,11 +49,6 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         return commands;
     }
 
-    /**
-     * Handle the sellstick command here
-     */
-    //TODO Fix all deprecation
-    //TODO Chat Color to be changed to NamedTextColor
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         PluginMeta pdf = SellStick.getInstance().getPluginMeta();
@@ -81,6 +68,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 }
             }
         }
+        //TODO: Reduce reduce reduce!!!
         else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("give") && sender.hasPermission("sellstick.give")) {
 
@@ -121,25 +109,26 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
 
                     // Load values from config onto the stick lores array
                     for (int z = 0; z < StickConfig.instance.lore.size(); z++) {
+                        //TODO: Replace below with new colour formatter
                         lores.add(StickConfig.instance.lore.get(z).replace("&", ChatColor.COLOR_CHAR + ""));
                     }
 
                     try {
                         lores.add(StickConfig.instance.durabilityLine - 1, "%usesLore%");
                     } catch (IndexOutOfBoundsException e) {
-                        ChatUtils.msg(sender, ChatColor.RED + "CONFIG ERROR:");
+                        ChatUtils.msg(sender, NamedTextColor.RED + "CONFIG ERROR:");
                         ChatUtils.msg(sender,
-                                ChatColor.RED + "You tried to set a DurabilityLine of "
+                                NamedTextColor.RED + "You tried to set a DurabilityLine of "
                                         + (StickConfig.instance.durabilityLine - 1) + " but the lore is "
                                         + lores.size() + " long");
                         ChatUtils.msg(sender,
-                                ChatColor.RED + "Try changing the DurabilityLine value in the config");
-                        ChatUtils.msg(sender, ChatColor.RED + "Then, run /sellstick reload");
+                                NamedTextColor.RED + "Try changing the DurabilityLine value in the config");
+                        ChatUtils.msg(sender, NamedTextColor.RED + "Then, run /sellstick reload");
 
                         return false;
 
                     } catch (Exception ex) {
-                        ChatUtils.msg(sender, ChatColor.RED
+                        ChatUtils.msg(sender, NamedTextColor.RED
                                 + "Something went wrong. Please check the console for an error message.");
                         ChatUtils.log(Level.SEVERE, ex.getMessage());
                         return false;
@@ -162,12 +151,12 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                             return false;
                         }
                     }
-
+                    //TODO: Change to new "setLore"
                     itemMeta.setLore(lores);
                     itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
                     itemStack.setItemMeta(itemMeta);
-
+                    //FIXME: Not sure what the fuck this error is
                     if (StickConfig.instance.glow) {
                         itemStack = ItemUtils.glow(itemStack);
                     }
@@ -185,7 +174,8 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 ChatUtils.msg(sender, StickConfig.instance.noPerm);
             }
         } else {
-            ChatUtils.msg(sender, "" + ChatColor.RED + "Invalid command. Type /Sellstick for help");
+            //TODO: Look at error
+            ChatUtils.msg(sender, "" + NamedTextColor.RED + "Invalid command. Type /Sellstick for help");
         }
         return false;
     }

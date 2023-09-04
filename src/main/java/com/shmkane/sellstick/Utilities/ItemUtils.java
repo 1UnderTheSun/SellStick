@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class ItemUtils {
+
+    //TODO: Replace all lore and item check with NBT
+
     /**
      * @param itemStack Accepts an itemstack
      * @return returns an enchanted item with durability 1(unbreaking)
@@ -42,7 +45,7 @@ public class ItemUtils {
 
     /**
      * This method was created incase someone wants to put "%remaining uses out of
-     * 50% Where the last int is NOT the remaining uses.
+     * 50%" Where the last int is NOT the remaining uses.
      * <p>
      * There's probably a more efficient way to do this but I haven't gotten around
      * to recoding it and it hasn't given an issue yet.

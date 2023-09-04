@@ -19,6 +19,7 @@ import java.util.logging.Level;
 
 public class EventUtils {
 
+    //TODO: Replace with NBT check
     public static boolean isSellStick(Player p, PlayerInteractEvent e) {
         Material sellItem;
         try {
@@ -40,7 +41,8 @@ public class EventUtils {
      * @param e Triggers on a playerinteract event
      * @return the worth
      */
-    @SuppressWarnings("deprecation")
+    //TODO: Fix Deprecation
+    //TODO: Reduce Code
     public static double calculateWorth(InventoryHolder c, PlayerInteractEvent e) {
 
         ItemStack[] contents = c.getInventory().getContents();
@@ -174,6 +176,8 @@ public class EventUtils {
      * @param e On a player interact event
      * @return True if the item in hand was a sellstick && player clicked a chest
      */
+
+    //TODO: Addition of Barrels and Shulkers
     public static boolean didClickChestWithSellStick(Player p, PlayerInteractEvent e) {
         Material sellItem;
         try {

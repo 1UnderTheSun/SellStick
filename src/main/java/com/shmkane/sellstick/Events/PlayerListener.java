@@ -27,7 +27,6 @@ import java.util.List;
  */
 public class PlayerListener implements Listener {
 
-    //TODO Add Barrels and Shulkers
     /**
      * Handles the actual clicking event of the player. Deprecated since getItemHand
      * in 1.9+ should specify which hand, but will keep since it allows for
@@ -38,16 +37,16 @@ public class PlayerListener implements Listener {
      *
      * @param e The event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onUse(PlayerInteractEvent e) {
+    @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
+    public void onSellstickUse(PlayerInteractEvent e) {
         Player p = e.getPlayer();
 
-        // When they left-click with that item, and that item has the same name
-        // as a sellstick
+        //TODO: Reduce Nested Ifs
+
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !p.isSneaking()) {
             if (EventUtils.didClickChestWithSellStick(p, e)) {
 
-                // Other plugin overriden.
+                // Check if another plugin is cancelling the event 
                 if (e.isCancelled()) {
                     ChatUtils.msg(p, StickConfig.instance.territoryMessage);
                     e.setCancelled(true);

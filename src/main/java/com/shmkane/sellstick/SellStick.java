@@ -11,25 +11,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
 /**
- * SellStick is a Minecraft plugin that allows customizable selling of
- * chest contents.
+ * SellStick is a Minecraft plugin that allows customizable
+ * selling of chest, shulker and barrel contents.
  *
- * @author shmkane
+ * @author shmkane, TreemanK, CodfishBender
  */
 
 public class SellStick extends JavaPlugin {
 
-    /**
-     * Instance of Vault Economy
-     **/
     private static Economy econ = null;
-    /**
-     * Instance of Plugin
-     */
     public static SellStick plugin;
-
     public boolean ShopGUIEnabled = false;
-
     public boolean EssentialsEnabled = false;
 
     /**
@@ -50,13 +42,14 @@ public class SellStick extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
+        //TODO: Remove???
         saveDefaultConfig();
-
+        //Load Variables, Listeners and Commands
         loadDependencies();
         loadClasses();
     }
 
+    // Reload plugin (only configurations && variables)
     public void reload() {
         // Update config file
         reloadConfig();
@@ -81,18 +74,12 @@ public class SellStick extends JavaPlugin {
 
     }
 
-    /**
-     * Attempt to disable plugin. Reset the values of some instance variables.
-     */
     @Override
     public void onDisable() {
+
     }
 
-    /**
-     * Attempts to hook into Vault.
-     *
-     * @return If vault is available or not.
-     */
+    // Vault Economy Provider
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
@@ -105,11 +92,6 @@ public class SellStick extends JavaPlugin {
         return true;
     }
 
-    /**
-     * Returns an instance of vault.
-     *
-     * @return Economy Instance
-     */
     public Economy getEcon() {
         return SellStick.econ;
     }
