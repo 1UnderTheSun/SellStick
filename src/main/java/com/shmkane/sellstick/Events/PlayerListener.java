@@ -1,11 +1,10 @@
 package com.shmkane.sellstick.Events;
 
 import com.shmkane.sellstick.Configs.StickConfig;
-import com.shmkane.sellstick.SellStick;
 import com.shmkane.sellstick.Utilities.ChatUtils;
 import com.shmkane.sellstick.Utilities.EventUtils;
 import com.shmkane.sellstick.Utilities.ItemUtils;
-import net.milkbowl.vault.economy.EconomyResponse;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +45,7 @@ public class PlayerListener implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !p.isSneaking()) {
             if (EventUtils.didClickChestWithSellStick(p, e)) {
 
-                // Check if another plugin is cancelling the event 
+                // Check if another plugin is cancelling the event
                 if (e.isCancelled()) {
                     ChatUtils.msg(p, StickConfig.instance.territoryMessage);
                     e.setCancelled(true);
@@ -60,18 +59,20 @@ public class PlayerListener implements Listener {
                     return;
                 }
 
-                ItemStack is = p.getItemInHand();
+                ItemStack is = p.getInventory().getItemInMainHand();
                 ItemMeta im = is.getItemMeta();
 
-                List<String> lores = im.getLore();
+                List<Component> lores = im.lore();
 
+                //TODO: Change to component for lores
                 int uses = ItemUtils.handleUses(p, lores);
-
+                //TODO: Make sure state isn't null
                 InventoryHolder c = (InventoryHolder) e.getClickedBlock().getState();
 
                 double total = EventUtils.calculateWorth(c, e);
 
                 if (total > 0) {
+                    //TODO: Change to component for lores
                     if (ItemUtils.postSale(lores, uses, p, total, im, is) && StickConfig.instance.sound) {
                         p.playSound(e.getClickedBlock().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
                     }
