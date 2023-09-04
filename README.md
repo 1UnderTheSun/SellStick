@@ -1,35 +1,38 @@
-# Sell Stick [(Download Here)](https://github.com/shmkane/SellStick/releases)
-##### [Lookup By Version Here](https://github.com/shmkane/SellStick/tags)
-### SellStick can hook into pre-configured **ShopGUIPlus** or **Essentials Worth** configs!
-### Tested: Factions UUID, Savage Factions, MCore Factions, ASkyBlock, BSkyBlock, FabledSkyblock, Lockette, and many more!
+# Sellstick
+#### SellStick is a Minecraft plugin that allows customisable selling of chest, shulker and barrel contents
 
-# Need Help?
+Sellstick is a fork of the popular Spigot plugin created by [(shmkane)](https://github.com/shmkane/SellStick/)
 
-### 1. [Create an 'issue' here](https://github.com/shmkane/SellStick/issues)
-### 2. [Join the DISCORD server](https://discord.gg/Q4CMsKC)
+## Features
 
-# "Watch" this thread! 
-## Updates *always* come to [GitHub](https://github.com/shmkane/SellStick) before [Spigot](https://www.spigotmc.org/resources/sell-stick-sell-wand.38119/)
-### ![How To Watch](https://i.imgur.com/sFfO7Vo.png)
+- Sell contents of chests, barrels and shulkers
+- Essentials, ShopGUI+ and Indepedent Sell Interface
+- Sell Multiplier
 
-# Commands
-## /*sellstick reload* - Loads new config changes onto server
-## /*sellstick give* <player> <amount> <uses/infinite> - Give player sellsticks
-   
-## Examples:
- 
-### /sellstick give shmkane 1 20 - Gives 1 sellstick with 20 uses
-### /sellstick give shmkane 2 10 - Gives 2 sellsticks each with 10 uses
-### /sellstick give shmkane 1 infinite - Gives an infinite sellstick
-### /sellstick give shmkane 2 i - Gives 2 infinite sellsticks
+If you have any issues or features, please open up an issue or have a go at it yourself in your own PR!
 
+###### Supported Platforms: Spigot, Paper and other servers implementing Bukkit API
 
-# Permissions 
-## *sellstick.give* - Allows the player with this permission to give another player sell sticks!
-## *sellstick.use* - Allows the player with this permission to use a sell stick!
-## *sellstick.multiplier.x* - Allows players to sell by a factor. 
+---
+## Commands
+```
+/sellstick reload - Loads new config changes onto server
+/sellstick give <player> <amount> <uses/infinite> - Give player sellsticks
+```
 
-## Examples:
-### sellstick.multiplier.1.1 - Sells for 1.1x reular price
+#### Examples
+```
+/sellstick give <PlayerName> 1 20 - Gives 1 sellstick with 20 uses
+/sellstick give <PlayerName> 2 10 - Gives 2 sellsticks each with 10 uses
+/sellstick give <PlayerName> 1 infinite - Gives an infinite sellstick
+/sellstick give <PlayerName> 2 i - Gives 2 infinite sellsticks
+```
+---
+## Permissions
+```
+sellstick.give - Allows the player with this permission to give another player sell sticks!
+sellstick.use - Allows the player with this permission to use a sell stick!
+sellstick.multiplier.x - Allows players to sell by a factor (e.g. sellstick.multiplier.1.1)
+```
 
 
