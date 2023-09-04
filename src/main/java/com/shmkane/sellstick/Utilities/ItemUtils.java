@@ -72,7 +72,7 @@ public class ItemUtils {
 
         List<Integer> hold = new ArrayList<Integer>();
 
-        // We take the split array, and loop thru it
+        // We take the split array, and loop through it
         for (int i = 0; i < split.length; i++) {
             // If we find a number in it,
             if (ChatUtils.isNumeric(split[i])) {
