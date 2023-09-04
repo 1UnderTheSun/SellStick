@@ -3,21 +3,22 @@ package com.shmkane.sellstick;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import java.util.logging.Level;
+import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Utilities.ItemUtils;
+import com.shmkane.sellstick.Utilities.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import com.shmkane.sellstick.Configs.StickConfig;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Handles the /sellstick Command
@@ -41,7 +42,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
@@ -68,26 +69,26 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
      * Handle the sellstick command here
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         PluginDescriptionFile pdf = plugin.getDescription();
 
         if (args.length == 0) {
-            sendCommandNotProperMessage(sender, pdf);
+            ChatUtils.sendCommandNotProperMessage(sender, pdf);
             return true;
 
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("sellstick.reload")) {
                 try {
                     plugin.getServer().getPluginManager().disablePlugin(plugin);
-                    plugin.msg(sender, ChatColor.RED + "Reloading Plugin");
+                    ChatUtils.msg(sender, ChatColor.RED + "Reloading Plugin");
                     plugin.getServer().getPluginManager().enablePlugin(plugin);
-                    plugin.msg(sender, ChatColor.GREEN + "Plugin Reloaded");
+                    ChatUtils.msg(sender, ChatColor.GREEN + "Plugin Reloaded");
                 } catch (Exception ex) {
-                    plugin.msg(sender, "Something went wrong! Check console for error");
+                    ChatUtils.msg(sender, "Something went wrong! Check console for error");
                     System.out.println(ex.getMessage());
                 }
             } else {
-                plugin.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getFullName() + " (MC "
+                ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getFullName() + " (MC "
                         + this.plugin.getServer().getVersion() + ") by " + pdf.getAuthors().get(0));
             }
             return true;
@@ -102,7 +103,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                         try {
                             numSticks = Integer.parseInt(args[2]);
                         } catch (Exception ex) {
-                            sendCommandNotProperMessage(sender, pdf);
+                            ChatUtils.sendCommandNotProperMessage(sender, pdf);
                             return false;
                         }
 
@@ -117,7 +118,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                             try {
                                 is = new ItemStack(Objects.requireNonNull(Material.getMaterial(StickConfig.instance.item)));
                             }catch(NullPointerException ex) {
-                                SellStick.log.severe(String.format("[%s] - Invalid item set in config. Please read the links I put in the config to fix this.", plugin.getDescription().getName()));
+                                SellStick.getInstance().log(Level.SEVERE, String.format("[%s] - Invalid item set in config. Please read the links I put in the config to fix this.", plugin.getDescription().getName()));
                                 return false;
                             }
                             ItemMeta im = is.getItemMeta();
@@ -134,21 +135,21 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                             try {
                                 lores.add(StickConfig.instance.durabilityLine - 1, "%usesLore%");
                             } catch (IndexOutOfBoundsException e) {
-                                plugin.msg(sender, ChatColor.RED + "CONFIG ERROR:");
-                                plugin.msg(sender,
+                                ChatUtils.msg(sender, ChatColor.RED + "CONFIG ERROR:");
+                                ChatUtils.msg(sender,
                                         ChatColor.RED + "You tried to set a DurabilityLine of "
                                                 + (StickConfig.instance.durabilityLine - 1) + " but the lore is "
                                                 + lores.size() + " long");
-                                plugin.msg(sender,
+                                ChatUtils.msg(sender,
                                         ChatColor.RED + "Try changing the DurabilityLine value in the config");
-                                plugin.msg(sender, ChatColor.RED + "Then, run /sellstick reload");
+                                ChatUtils.msg(sender, ChatColor.RED + "Then, run /sellstick reload");
 
                                 return false;
 
                             } catch (Exception ex) {
-                                plugin.msg(sender, ChatColor.RED
+                                ChatUtils.msg(sender, ChatColor.RED
                                         + "Something went wrong. Please check the console for an error message.");
-                                SellStick.log.severe(ex.getMessage());
+                                SellStick.getInstance().log(Level.SEVERE, ex.getMessage());
                                 return false;
                             }
 
@@ -165,7 +166,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                                                     StickConfig.instance.finiteLore.replace("%remaining%", uses + "")));
                                 } catch (Exception ex) {
                                     // They typed something stupid here...
-                                    sendCommandNotProperMessage(sender, pdf);
+                                    ChatUtils.sendCommandNotProperMessage(sender, pdf);
                                     return false;
                                 }
                             }
@@ -176,55 +177,29 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                             is.setItemMeta(im);
 
                             if (StickConfig.instance.glow) {
-                                is = glow(is);
+                                is = ItemUtils.glow(is);
                             }
 
                             target.getInventory().addItem(is);
                         }
-                        plugin.msg(target, StickConfig.instance.receiveMessage.replace("%amount%",
+                        ChatUtils.msg(target, StickConfig.instance.receiveMessage.replace("%amount%",
                                 Integer.parseInt(args[2]) + ""));
 
-                        plugin.msg(sender, StickConfig.instance.giveMessage.replace("%player%", target.getName())
+                        ChatUtils.msg(sender, StickConfig.instance.giveMessage.replace("%player%", target.getName())
                                 .replace("%amount%", Integer.parseInt(args[2]) + ""));
 
                         return true;
 
                     } else {
-                        plugin.msg(sender, ChatColor.RED + "Player not found");
+                        ChatUtils.msg(sender, ChatColor.RED + "Player not found");
                     }
                 } else {
-                    plugin.msg(sender, StickConfig.instance.noPerm);
+                    ChatUtils.msg(sender, StickConfig.instance.noPerm);
                 }
             }
         } else {
-            plugin.msg(sender, "" + ChatColor.RED + "Invalid command. Type /Sellstick for help");
+            ChatUtils.msg(sender, "" + ChatColor.RED + "Invalid command. Type /Sellstick for help");
         }
         return false;
     }
-
-    /**
-     * Sent to 'sender' if their command was invalid.
-     * @param sender Sender of the command
-     * @param pdf PluginDescriptionFile object
-     */
-    void sendCommandNotProperMessage(CommandSender sender, PluginDescriptionFile pdf) {
-        // They typed something stupid here...
-        plugin.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getFullName()
-                + " (MC " + this.plugin.getServer().getVersion() + ") by " + pdf.getAuthors().get(0));
-        if (sender.hasPermission("sellstick.give")) {
-            plugin.msg(sender, ChatColor.GREEN
-                    + "/SellStick give <player> <amount> (<uses>/infinite)");
-        }
-
-    }
-
-    /**
-     * @param itemStack Accepts an itemstack
-     * @return returns an enchanted item with durability 1(unbreaking)
-     */
-    public ItemStack glow(ItemStack itemStack) {
-        itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        return itemStack;
-    }
-
 }

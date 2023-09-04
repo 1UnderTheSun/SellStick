@@ -1,17 +1,16 @@
 package com.shmkane.sellstick;
 
-import com.earth2me.essentials.Essentials;
 import com.shmkane.sellstick.Configs.PriceConfig;
 import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Events.PlayerListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
 /**
- * SellStick is a MC plugin that allows customizable selling of
+ * SellStick is a Minecraft plugin that allows customizable selling of
  * chest contents.
  *
  * @author shmkane
@@ -22,8 +21,15 @@ public class SellStick extends JavaPlugin {
     /**
      * Instance of Vault Economy
      **/
-
     private static Economy econ = null;
+    /**
+     * Instance of Plugin
+     */
+    public static SellStick plugin;
+
+    public boolean ShopGUIEnabled = false;
+
+    public boolean EssentialsEnabled = false;
 
     /**
      * Initial plugin setup. Creation and loading of YML files.
@@ -38,21 +44,18 @@ public class SellStick extends JavaPlugin {
     public void onEnable() {
 
         if (!setupEconomy()) {
-            this.log("SEVERE","[%s] - Disabled due to no Vault dependency found!");
+            plugin.log(Level.SEVERE,"[%s] - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        setupEssentials();
+        ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
+        EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
 
         /*
           Check Soft Dependencies
          */
-        if (Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus")) {
-            if (!StickConfig.instance.useShopGUI) {
-                this.log("WARNING", "[%s] ShopGUI+ was found but not enabled in the config!");
-            }
-        }
+
 
         this.saveDefaultConfig();
 
@@ -60,7 +63,7 @@ public class SellStick extends JavaPlugin {
         PriceConfig.instance.setup(getDataFolder());
 
         this.getCommand("sellstick").setExecutor(new SellStickCommand(this));
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
     /**
@@ -68,38 +71,13 @@ public class SellStick extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        this.log("WARNING","[%s] - Attempting to disabling...");
+        plugin.log(Level.WARNING,"[%s] - Attempting to disabling...");
         try {
             econ = null;
         } catch (Exception ex) {
-            this.log("SEVERE","[%s] - Was not disabled correctly!");
+            plugin.log(Level.SEVERE,"[%s] - Was not disabled correctly!");
         } finally {
-            this.log("WARNING","[%s] - Attempt complete!");
-        }
-    }
-
-    /**
-     * Checks if Essentials is available to be hooked into.
-     */
-    public void setupEssentials() {
-
-        try {
-            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
-                this.log("Level.INFO","[%s] Essentials was found");
-                Essentials ess = Essentials.getPlugin(Essentials.class);
-                if (StickConfig.instance.useEssentialsWorth) {
-                    if (ess == null) {
-                        this.log("WARNING","[%s] Trying to use essentials worth but essentials not found!");
-                    } else {
-                        this.log("INFO","[%s] Using essentials worth!");
-                    }
-                }
-            }else{
-                this.log("WARNING","[%s] Essentials not found");
-            }
-        } catch (Exception ex) {
-            this.log("WARNING", "Something went wrong enabling Essentials. If you don't use it, you can ignore this message:");
-            this.log("WARNING",(ex.getMessage()));
+            plugin.log(Level.WARNING,"[%s] - Attempt complete!");
         }
     }
 
@@ -117,47 +95,29 @@ public class SellStick extends JavaPlugin {
             return false;
         }
         econ = rsp.getProvider();
-        return econ != null;
+        return true;
     }
 
     /**
      * Returns an instance of vault.
      *
-     * @return
+     * @return Economy Instance
      */
     public Economy getEcon() {
         return SellStick.econ;
     }
-    /**
-     * This will send a player a message. If message is empty, it wont send
-     * anything.
-     *
-     * @param sender The target player
-     * @param msg    the message
-     */
-    public void msg(CommandSender sender, String msg) {
-        if (msg.length() == 0) {
-            return;
-        }
 
-        sender.sendMessage(StickConfig.instance.prefix + msg);
-    }
+
 
     /**
      * Server logger
      **/
-    public void log(String string) {
-        getLogger().log(Level.INFO, string);
+    public void log(Level level, String string) {
+        getLogger().log(level, string);
     }
 
-    public void log(String level, String string) {
-        Level l = Level.INFO;
-        switch(level) {
-            case "WARNING": l = Level.WARNING; break;
-            case "SEVERE": l = Level.SEVERE; break;
-            case "ALL": l = Level.ALL; break;
-        }
-        getLogger().log(l, string);
+    public static SellStick getInstance() {
+        return SellStick.plugin;
     }
 
 }

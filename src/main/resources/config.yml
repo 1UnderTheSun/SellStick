@@ -119,20 +119,12 @@ BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
 #
 #If they try to do something other than selling with the sellstick...
 NonSellingRelated: '&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)'
-#
-#
-#Do you want to use shopgui+ for prices
-#instead of my prices.yml?
-#if so, enable this
-UseShopGUI: false
-#
-#
-#Do you want to use essentials worth.yml for your prices
-#instead of my prices.yml?
-#if so, enable this
-UseEssentialsWorth: false
-#
-#
+
+
+#Choose between three different price interfaces, selects default if incorrect spelling/null
+#PricesYML (Default), ShopGUI, Essentials
+PriceInterface: 'PricesYML'
+
 #The message to send to the Admin who gave the sticks
 # Placeholders:
 #   %player - person who will get the sellstick

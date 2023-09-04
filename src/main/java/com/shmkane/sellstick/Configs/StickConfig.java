@@ -3,8 +3,8 @@ package com.shmkane.sellstick.Configs;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.util.logging.Level;
+import com.google.common.base.Preconditions;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.ChatColor;
@@ -20,6 +20,7 @@ public class StickConfig {
      * Instance of the Config
      **/
     public static StickConfig instance = new StickConfig();
+
     /**
      * Instance of the file
      **/
@@ -30,44 +31,52 @@ public class StickConfig {
      * Display name of the stick
      **/
     public String name;
+
     /**
      * String version of item
      **/
     public String item;
 
-
     /**
      * Item Lore
      **/
     public List<String> lore;
+
     /**
      * Lore if finite
      **/
     public String finiteLore;
+
     /**
      * Lore if infinite
      **/
     public String infiniteLore;
+
     /**
      * Which line the durability will be shown on.
      **/
     public int durabilityLine;
+
     /**
      * Message is prefixed with this
      **/
     public String prefix;
+
     /**
      * Full message sent to user
      **/
     public String sellMessage;
+
     /**
      * Message sent if user doesn't have permission to use sellstick
      **/
     public String noPerm;
+
     /**
      * Message sent if user can't use sellstick there
      **/
     public String territoryMessage;
+
     /**
      * Message sent if items are worthless
      **/
@@ -76,67 +85,72 @@ public class StickConfig {
      * Message sent if sellstick breaks
      **/
     public String brokenStick;
+
     /**
      * If they try to do something other than selling with the sellstick...
      */
     public String nonSellingRelated;
+
     /**
      * Message sent when giving someone a sellstick
      **/
     public String giveMessage;
+
     /**
      * Message received if you get a sellstick
      **/
     public String receiveMessage;
 
     /**
-     * Whether or not to make sellstick glow (enchant effect)
+     * Whether to make sellstick glow (enchant effect)
      **/
     public boolean glow;
+
     /**
-     * Whether or not to use essentials worth
-     **/
-    public boolean useEssentialsWorth;
-    /**
-     * Whether or not to use ShopGUI+
-     **/
-    public boolean useShopGUI;
-    /**
-     * Whether or not to play a sound on use of sellstick
+     * Whether to play a sound on use of sellstick
      **/
     public boolean sound;
+
     /**
-     * Whether or not to print debug messages to console
+     * Whether to print debug messages to console
      **/
     public boolean debug;
-    private SellingInterface sellInterface = SellingInterface.PRICESYML;
+
+    private SellingInterface sellInterface;
+
+    /**
+     *  <ul>Choose between three different price interfaces
+     *      <li>"PricesYML" (Default)</li>
+     *      <li>"ShopGUI</li>
+     *      <li>"Essentials"</li>
+     *  </ul>
+     *
+     */
+    private String PriceInterface = "PricesYML";
 
     /**
      * Takes values from the config and loads them into variables.
      */
+    @SuppressWarnings("deprecation")
     public void loadValues() {
         FileConfiguration config = YamlConfiguration.loadConfiguration(this.conf);
-        this.name = ChatColor.translateAlternateColorCodes('&', config.getString("DisplayName"));
-        this.item = ChatColor.translateAlternateColorCodes('&', config.getString("ItemType").toUpperCase());
+        this.name = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("DisplayName")));
+        this.item = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("ItemType")).toUpperCase());
         this.glow = config.getBoolean("Glow");
-
         this.lore = config.getStringList("StickLore");
-        this.finiteLore = ChatColor.translateAlternateColorCodes('&', config.getString("FiniteLore"));
-        this.infiniteLore = ChatColor.translateAlternateColorCodes('&', config.getString("InfiniteLore"));
-
+        this.finiteLore = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("FiniteLore")));
+        this.infiniteLore = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("InfiniteLore")));
         this.durabilityLine = config.getInt("DurabilityLine");
-
-        this.prefix = ChatColor.translateAlternateColorCodes('&', config.getString("MessagePrefix"));
-        this.sellMessage = ChatColor.translateAlternateColorCodes('&', config.getString("SellMessage"));
-        this.noPerm = ChatColor.translateAlternateColorCodes('&', config.getString("NoPermissionMessage"));
-        this.territoryMessage = ChatColor.translateAlternateColorCodes('&', config.getString("InvalidTerritoryMessage"));
-        this.nothingWorth = ChatColor.translateAlternateColorCodes('&', config.getString("NotWorthMessage"));
-        this.brokenStick = ChatColor.translateAlternateColorCodes('&', config.getString("BrokenStick"));
-        this.nonSellingRelated = ChatColor.translateAlternateColorCodes('&', config.getString("NonSellingRelated"));
-        this.giveMessage = ChatColor.translateAlternateColorCodes('&', config.getString("GiveMessage"));
-        this.receiveMessage = ChatColor.translateAlternateColorCodes('&', config.getString("ReceiveMessage"));
-        this.useEssentialsWorth = config.getBoolean("UseEssentialsWorth");
-        this.useShopGUI = config.getBoolean("UseShopGUI");
+        this.prefix = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("MessagePrefix")));
+        this.sellMessage = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("SellMessage")));
+        this.noPerm = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("NoPermissionMessage")));
+        this.territoryMessage = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("InvalidTerritoryMessage")));
+        this.nothingWorth = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("NotWorthMessage")));
+        this.brokenStick = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("BrokenStick")));
+        this.nonSellingRelated = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("NonSellingRelated")));
+        this.giveMessage = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("GiveMessage")));
+        this.receiveMessage = ChatColor.translateAlternateColorCodes('&', Preconditions.checkNotNull(config.getString("ReceiveMessage")));
+        this.PriceInterface = config.getString("PriceInterface");
         this.sound = config.getBoolean("UseSound");
         this.debug = config.getBoolean("debug");
     }
@@ -183,7 +197,7 @@ public class StickConfig {
             try {
                 config.save(this.conf);
             } catch (Exception e) {
-                e.printStackTrace();
+                SellStick.getInstance().log(Level.SEVERE, e.getMessage());
             }
         }
         loadValues();
@@ -191,36 +205,7 @@ public class StickConfig {
     }
 
     private void handleInterface() {
-        if (useEssentialsWorth && useShopGUI) {
-            SellStick.log.warning("Server has EssentialsWorth AND ShopGUI Selected.");
-            SellStick.log.warning("Defaulting to ShopGUI");
-            SellStick.log.warning("Edit the config to remove this error.");
-            sellInterface = SellingInterface.SHOPGUI;
-
-        } else if (!useEssentialsWorth && useShopGUI) {
-
-            SellStick.log.info("Using ShopGUI worth for prices");
-            sellInterface = SellingInterface.SHOPGUI;
-
-
-        } else if (useEssentialsWorth && !useShopGUI) {
-
-            SellStick.log.info("Using essentials for prices");
-            sellInterface = SellingInterface.ESSWORTH;
-
-
-        } else if (!useEssentialsWorth && !useShopGUI) {
-
-            SellStick.log.info("Using prices.yml for prices");
-            sellInterface = SellingInterface.PRICESYML;
-
-        } else {
-            SellStick.log.severe("Couldn't determine what to use.");
-            SellStick.log.severe("Defaulting to PricesYML");
-            SellStick.log.severe("Edit the config to remove this error.");
-            sellInterface = SellingInterface.PRICESYML;
-        }
-
+        sellInterface = setSellInterface(PriceInterface);
     }
 
     /**
@@ -265,11 +250,24 @@ public class StickConfig {
     }
 
     /**
-     * What interface to use to sell
+     * Sets the Sell Interface
+     *
+     * @param priceInterface sets the interface for which the selling price is configured to
+     **/
+    public SellingInterface setSellInterface(String priceInterface) {
+        if(priceInterface.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled) return SellingInterface.SHOPGUI;
+        if(priceInterface.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled) return SellingInterface.ESSWORTH;
+        SellStick.getInstance().log(Level.WARNING, "Prices.yml loaded as it did not match the required options given.");
+        return SellingInterface.PRICESYML;
+    }
+
+    /**
+     * What interfaces to use to sell
      **/
     public enum SellingInterface {
         PRICESYML,
         ESSWORTH,
         SHOPGUI
     }
+
 }
