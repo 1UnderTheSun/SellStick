@@ -9,6 +9,10 @@ import com.shmkane.sellstick.Utilities.ItemUtils;
 import com.shmkane.sellstick.Utilities.ChatUtils;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -65,130 +69,120 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         if (args.length == 0) {
             ChatUtils.sendCommandNotProperMessage(sender, pdf);
             return true;
-
-        } else if (args.length == 1) {
+        }
+        else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("sellstick.reload")) {
                 try {
-                    //TODO Fix Reload to only change configuration rather than whole plugin
-                    SellStick.getInstance().getServer().getPluginManager().disablePlugin(SellStick.getInstance());
-                    ChatUtils.msg(sender, ChatColor.RED + "Reloading Plugin");
-                    SellStick.getInstance().getServer().getPluginManager().enablePlugin(SellStick.getInstance());
-                    ChatUtils.msg(sender, ChatColor.GREEN + "Plugin Reloaded");
+                    SellStick.plugin.reload();
+                    return true;
                 } catch (Exception ex) {
-                    ChatUtils.msg(sender, "Something went wrong! Check console for error");
-                    SellStick.getInstance().log(Level.SEVERE, ex.getMessage());
+                    ChatUtils.msg(sender, "&cSomething went wrong! Check console for error");
+                    ChatUtils.log(Level.SEVERE, ex.getMessage());
                 }
-            } else {
-                //TODO Remove Redundant Shit
-                ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getAuthors() + " (MC "
-                        + SellStick.getInstance().getServer().getVersion() + ") by " + ().get(0));
             }
-            return true;
-        } else if (args.length == 4) {
-            if (args[0].equalsIgnoreCase("give")) {
-                if (sender.hasPermission("sellstick.give")) {
-                    Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
-                    //TODO Reduce Code in Command Class
-                    if (target != null && target.isOnline()) {
+        }
+        else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("give") && sender.hasPermission("sellstick.give")) {
 
-                        int numSticks;
+                Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
 
+                if (target == null) {
+                    ChatUtils.msg(sender, "&cPlayer not found");
+                    return false;
+                }
+
+                int numSticks;
+
+                try {
+                    numSticks = Integer.parseInt(args[2]);
+                } catch (NumberFormatException ex) {
+                    ChatUtils.msg(sender, "&cNot a number: " + args[2]);
+                    return false;
+                }
+
+                for (int i = 0; i < numSticks; i++) {
+                    /*
+                      This assigns a random string to the item meta so that the item cannot be
+                      stacked
+                     */
+                    RandomString random = new RandomString(5);
+                    String UUID = random.nextString();
+                    ItemStack itemStack;
+                    try {
+                        itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(StickConfig.instance.item)));
+                    } catch(NullPointerException ex) {
+                        ChatUtils.log(Level.SEVERE, "[%s] - Invalid item set in config. Please read the links I put in the config to fix this.");
+                        return false;
+                    }
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+
+                    List<String> lores = new ArrayList<>();
+                    itemMeta.displayName(MiniMessage.miniMessage().deserialize(StickConfig.instance.name + UUID));
+
+                    // Load values from config onto the stick lores array
+                    for (int z = 0; z < StickConfig.instance.lore.size(); z++) {
+                        lores.add(StickConfig.instance.lore.get(z).replace("&", ChatColor.COLOR_CHAR + ""));
+                    }
+
+                    try {
+                        lores.add(StickConfig.instance.durabilityLine - 1, "%usesLore%");
+                    } catch (IndexOutOfBoundsException e) {
+                        ChatUtils.msg(sender, ChatColor.RED + "CONFIG ERROR:");
+                        ChatUtils.msg(sender,
+                                ChatColor.RED + "You tried to set a DurabilityLine of "
+                                        + (StickConfig.instance.durabilityLine - 1) + " but the lore is "
+                                        + lores.size() + " long");
+                        ChatUtils.msg(sender,
+                                ChatColor.RED + "Try changing the DurabilityLine value in the config");
+                        ChatUtils.msg(sender, ChatColor.RED + "Then, run /sellstick reload");
+
+                        return false;
+
+                    } catch (Exception ex) {
+                        ChatUtils.msg(sender, ChatColor.RED
+                                + "Something went wrong. Please check the console for an error message.");
+                        ChatUtils.log(Level.SEVERE, ex.getMessage());
+                        return false;
+                    }
+
+                    if (args[3].equalsIgnoreCase("infinite") || args[3].equalsIgnoreCase("i")) {
+                        lores.set(StickConfig.instance.durabilityLine - 1,
+                                lores.get(StickConfig.instance.durabilityLine - 1).replace("%usesLore%",
+                                        StickConfig.instance.infiniteLore));
+                    } else {
                         try {
-                            numSticks = Integer.parseInt(args[2]);
+                            int uses = Integer.parseInt(args[3]);
+                            // otherwise replace it with the remaining uses
+                            lores.set(StickConfig.instance.durabilityLine - 1,
+                                    lores.get(StickConfig.instance.durabilityLine - 1).replace("%usesLore%",
+                                            StickConfig.instance.finiteLore.replace("%remaining%", uses + "")));
                         } catch (Exception ex) {
+                            // They typed something stupid here...
                             ChatUtils.sendCommandNotProperMessage(sender, pdf);
                             return false;
                         }
-
-                        for (int i = 0; i < numSticks; i++) {
-                            /*
-                              This assigns a random string to the item meta so that the item cannot be
-                              stacked
-                             */
-                            RandomString random = new RandomString(5);
-                            String UUID = random.nextString();
-                            ItemStack is;
-                            try {
-                                is = new ItemStack(Objects.requireNonNull(Material.getMaterial(StickConfig.instance.item)));
-                            }catch(NullPointerException ex) {
-                                SellStick.getInstance().log(Level.SEVERE, String.format("[%s] - Invalid item set in config. Please read the links I put in the config to fix this.", plugin.getDescription().getName()));
-                                return false;
-                            }
-                            ItemMeta im = is.getItemMeta();
-
-                            List<String> lores = new ArrayList<String>();
-                            //TODO Figure out how to change string to component
-                            im.displayName(Component.text(StickConfig.instance.name + UUID));
-
-                            // Load values from config onto the stick lores array
-                            for (int z = 0; z < StickConfig.instance.lore.size(); z++) {
-                                lores.add(StickConfig.instance.lore.get(z).replace("&", ChatColor.COLOR_CHAR + ""));
-                            }
-
-                            try {
-                                lores.add(StickConfig.instance.durabilityLine - 1, "%usesLore%");
-                            } catch (IndexOutOfBoundsException e) {
-                                ChatUtils.msg(sender, ChatColor.RED + "CONFIG ERROR:");
-                                ChatUtils.msg(sender,
-                                        ChatColor.RED + "You tried to set a DurabilityLine of "
-                                                + (StickConfig.instance.durabilityLine - 1) + " but the lore is "
-                                                + lores.size() + " long");
-                                ChatUtils.msg(sender,
-                                        ChatColor.RED + "Try changing the DurabilityLine value in the config");
-                                ChatUtils.msg(sender, ChatColor.RED + "Then, run /sellstick reload");
-
-                                return false;
-
-                            } catch (Exception ex) {
-                                ChatUtils.msg(sender, ChatColor.RED
-                                        + "Something went wrong. Please check the console for an error message.");
-                                SellStick.getInstance().log(Level.SEVERE, ex.getMessage());
-                                return false;
-                            }
-
-                            if (args[3].equalsIgnoreCase("infinite") || args[3].equalsIgnoreCase("i")) {
-                                lores.set(StickConfig.instance.durabilityLine - 1,
-                                        lores.get(StickConfig.instance.durabilityLine - 1).replace("%usesLore%",
-                                                StickConfig.instance.infiniteLore));
-                            } else {
-                                try {
-                                    int uses = Integer.parseInt(args[3]);
-                                    // otherwise replace it with the remaining uses
-                                    lores.set(StickConfig.instance.durabilityLine - 1,
-                                            lores.get(StickConfig.instance.durabilityLine - 1).replace("%usesLore%",
-                                                    StickConfig.instance.finiteLore.replace("%remaining%", uses + "")));
-                                } catch (Exception ex) {
-                                    // They typed something stupid here...
-                                    ChatUtils.sendCommandNotProperMessage(sender, pdf);
-                                    return false;
-                                }
-                            }
-
-                            im.setLore(lores);
-                            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
-                            is.setItemMeta(im);
-
-                            if (StickConfig.instance.glow) {
-                                is = ItemUtils.glow(is);
-                            }
-
-                            target.getInventory().addItem(is);
-                        }
-                        ChatUtils.msg(target, StickConfig.instance.receiveMessage.replace("%amount%",
-                                Integer.parseInt(args[2]) + ""));
-
-                        ChatUtils.msg(sender, StickConfig.instance.giveMessage.replace("%player%", target.getName())
-                                .replace("%amount%", Integer.parseInt(args[2]) + ""));
-
-                        return true;
-
-                    } else {
-                        ChatUtils.msg(sender, ChatColor.RED + "Player not found");
                     }
-                } else {
-                    ChatUtils.msg(sender, StickConfig.instance.noPerm);
+
+                    itemMeta.setLore(lores);
+                    itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+                    itemStack.setItemMeta(itemMeta);
+
+                    if (StickConfig.instance.glow) {
+                        itemStack = ItemUtils.glow(itemStack);
+                    }
+
+                    target.getInventory().addItem(itemStack);
                 }
+                ChatUtils.msg(target, StickConfig.instance.receiveMessage.replace("%amount%",
+                        Integer.parseInt(args[2]) + ""));
+
+                ChatUtils.msg(sender, StickConfig.instance.giveMessage.replace("%player%", target.getName())
+                        .replace("%amount%", Integer.parseInt(args[2]) + ""));
+
+                return true;
+            } else {
+                ChatUtils.msg(sender, StickConfig.instance.noPerm);
             }
         } else {
             ChatUtils.msg(sender, "" + ChatColor.RED + "Invalid command. Type /Sellstick for help");

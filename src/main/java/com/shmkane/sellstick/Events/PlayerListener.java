@@ -38,7 +38,6 @@ public class PlayerListener implements Listener {
      *
      * @param e The event
      */
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR)
     public void onUse(PlayerInteractEvent e) {
         Player p = e.getPlayer();

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import com.google.common.base.Preconditions;
+import com.shmkane.sellstick.Utilities.ChatUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.ChatColor;
@@ -197,7 +198,7 @@ public class StickConfig {
             try {
                 config.save(this.conf);
             } catch (Exception e) {
-                SellStick.getInstance().log(Level.SEVERE, e.getMessage());
+                ChatUtils.log(Level.SEVERE, e.getMessage());
             }
         }
         loadValues();
@@ -257,7 +258,7 @@ public class StickConfig {
     public SellingInterface setSellInterface(String priceInterface) {
         if(priceInterface.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled) return SellingInterface.SHOPGUI;
         if(priceInterface.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled) return SellingInterface.ESSWORTH;
-        SellStick.getInstance().log(Level.WARNING, "Prices.yml loaded as it did not match the required options given.");
+        ChatUtils.log(Level.WARNING, "Prices.yml loaded as it did not match the required options given.");
         return SellingInterface.PRICESYML;
     }
 

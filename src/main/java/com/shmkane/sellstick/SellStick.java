@@ -3,6 +3,7 @@ package com.shmkane.sellstick;
 import com.shmkane.sellstick.Configs.PriceConfig;
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.Events.PlayerListener;
+import com.shmkane.sellstick.Utilities.ChatUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -43,27 +44,41 @@ public class SellStick extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        // Don't load plugin if Vault is not present
         if (!setupEconomy()) {
-            plugin.log(Level.SEVERE,"[%s] - Disabled due to no Vault dependency found!");
+            ChatUtils.log(Level.SEVERE,"[%s] - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
-        EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+        saveDefaultConfig();
 
-        /*
-          Check Soft Dependencies
-         */
+        loadDependencies();
+        loadClasses();
+    }
 
-
-        this.saveDefaultConfig();
-
+    public void reload() {
+        // Update config file
+        reloadConfig();
+        // Update dependencies
+        loadDependencies();
+        // Update config vars
         StickConfig.instance.setup(getDataFolder());
         PriceConfig.instance.setup(getDataFolder());
+    }
 
-        this.getCommand("sellstick").setExecutor(new SellStickCommand(this));
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+    public void loadDependencies() {
+        // Check Soft Dependencies
+        ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
+        EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+    }
+
+    public void loadClasses() {
+        // Register Listeners
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        // Register Commands
+        getCommand("sellstick").setExecutor(new SellStickCommand());
+
     }
 
     /**
@@ -71,14 +86,6 @@ public class SellStick extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        plugin.log(Level.WARNING,"[%s] - Attempting to disabling...");
-        try {
-            econ = null;
-        } catch (Exception ex) {
-            plugin.log(Level.SEVERE,"[%s] - Was not disabled correctly!");
-        } finally {
-            plugin.log(Level.WARNING,"[%s] - Attempt complete!");
-        }
     }
 
     /**
@@ -105,15 +112,6 @@ public class SellStick extends JavaPlugin {
      */
     public Economy getEcon() {
         return SellStick.econ;
-    }
-
-
-
-    /**
-     * Server logger
-     **/
-    public void log(Level level, String string) {
-        getLogger().log(level, string);
     }
 
     public static SellStick getInstance() {

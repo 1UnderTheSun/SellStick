@@ -6,6 +6,8 @@ import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.logging.Level;
+
 
 public class ChatUtils {
     /**
@@ -52,5 +54,13 @@ public class ChatUtils {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * Server logger
+     **/
+    public static void log(Level level, String string) {
+        SellStick.plugin.getLogger().log(level, string);
     }
 }

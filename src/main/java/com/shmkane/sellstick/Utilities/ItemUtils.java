@@ -84,9 +84,9 @@ public class ItemUtils {
         try {
             min = hold.get(0);
         } catch (Exception ex) {
-            SellStick.getInstance().log(Level.SEVERE, StickConfig.instance.durabilityLine + "");
-            SellStick.getInstance().log(Level.SEVERE, "The problem seems to be that your sellstick useline number has changed.");
-            SellStick.getInstance().log(Level.SEVERE, ex.toString());
+            ChatUtils.log(Level.SEVERE, StickConfig.instance.durabilityLine + "");
+            ChatUtils.log(Level.SEVERE, "The problem seems to be that your sellstick useline number has changed.");
+            ChatUtils.log(Level.SEVERE, ex.toString());
         }
 
         for (int i = 0; i < hold.size(); i++) {
@@ -250,7 +250,7 @@ public class ItemUtils {
                         .replace("%price%", SellStick.getInstance().getEcon().format(r.amount)));
             }
 
-            SellStick.getInstance().log(Level.INFO,p.getName() + " sold items via sellstick for " + r.amount + " and now has " + r.balance);
+            ChatUtils.log(Level.INFO,p.getName() + " sold items via sellstick for " + r.amount + " and now has " + r.balance);
         } else {
             ChatUtils.msg(p, String.format("An error occured: %s", r.errorMessage));
         }

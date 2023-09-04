@@ -6,6 +6,7 @@ import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.SellStick;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.exception.player.PlayerDataNotLoadedException;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.logging.Level;
 
 public class EventUtils {
@@ -22,11 +24,11 @@ public class EventUtils {
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
         } catch (Exception ex) {
-            SellStick.getInstance().log(Level.SEVERE, "Invalid SellStick item set in config.");
+            ChatUtils.log(Level.SEVERE, "Invalid SellStick item set in config.");
             return false;
         }
 
-        return p.getItemInHand().getType() == sellItem && p.getItemInHand().getItemMeta().getDisplayName() != null
+        return p.getActiveItem().getType() == sellItem && p.getItemInHand().getItemMeta().getDisplayName() != null
                 && p.getItemInHand().getItemMeta().getDisplayName().startsWith(StickConfig.instance.name);
 
     }
@@ -50,8 +52,8 @@ public class EventUtils {
         StickConfig.SellingInterface si = StickConfig.instance.getSellInterface();
 
         if (StickConfig.instance.debug) {
-            SellStick.getInstance().log(Level.WARNING,"1-Getting prices from " + si);
-            SellStick.getInstance().log(Level.WARNING,"2-Clicked Chest(size=" + c.getInventory().getSize() + "):");
+            ChatUtils.log(Level.WARNING,"1-Getting prices from " + si);
+            ChatUtils.log(Level.WARNING,"2-Clicked Chest(size=" + c.getInventory().getSize() + "):");
         }
 
         for (int i = 0; i < c.getInventory().getSize(); i++) {
@@ -81,8 +83,8 @@ public class EventUtils {
 
                         if (StickConfig.instance.debug) {
                             if (price > 0) {
-                                SellStick.getInstance().log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
-                                SellStick.getInstance().log(Level.WARNING,"-Price: " + price);
+                                ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
+                                ChatUtils.log(Level.WARNING,"-Price: " + price);
                             }
                         }
 
@@ -95,13 +97,13 @@ public class EventUtils {
 
                         if (StickConfig.instance.debug) {
                             if (price > 0)
-                                SellStick.getInstance().log(Level.WARNING,"-Price: " + price);
-                            SellStick.getInstance().log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
+                                ChatUtils.log(Level.WARNING,"-Price: " + price);
+                            ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
                         }
 
 
                     } catch (Exception exception) {
-                        SellStick.getInstance().log(Level.WARNING, "Something went wrong enabling Essentials. If you don't use it, you can ignore this message.");
+                        ChatUtils.log(Level.WARNING, "Something went wrong enabling Essentials. If you don't use it, you can ignore this message.");
                     }
 
                 } else if (si == StickConfig.SellingInterface.SHOPGUI) {
@@ -114,14 +116,14 @@ public class EventUtils {
 
                     if (StickConfig.instance.debug) {
                         if (price > 0)
-                            SellStick.getInstance().log(Level.WARNING,"-Price: " + price);
-                        SellStick.getInstance().log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
+                            ChatUtils.log(Level.WARNING,"-Price: " + price);
+                        ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
                     }
 
                 }
 
                 if (StickConfig.instance.debug) {
-                    SellStick.getInstance().log(Level.WARNING,"--Price of (" + contents[i].getType() + "): " + price);
+                    ChatUtils.log(Level.WARNING,"--Price of (" + contents[i].getType() + "): " + price);
                 }
 
                 int amount;
@@ -142,18 +144,18 @@ public class EventUtils {
 
                 if (StickConfig.instance.debug) {
                     if (!(ex instanceof NullPointerException))
-                        SellStick.getInstance().log(Level.WARNING, ex.toString());
+                        ChatUtils.log(Level.WARNING, ex.toString());
                 }
 
                 if (si == StickConfig.SellingInterface.SHOPGUI && ex instanceof PlayerDataNotLoadedException) {
-                    SellStick.getInstance().log(Level.SEVERE,"Player should relog to fix this.");
+                    ChatUtils.log(Level.SEVERE,"Player should relog to fix this.");
                     e.getPlayer().sendMessage(ChatColor.DARK_RED + "Please re-log to use SellStick.");
                     return 0;
                 }
             }
             if (StickConfig.instance.debug && slotPrice > 0) {
-                SellStick.getInstance().log(Level.WARNING,"---slotPrice=" + slotPrice);
-                SellStick.getInstance().log(Level.WARNING,"---total=" + total);
+                ChatUtils.log(Level.WARNING,"---slotPrice=" + slotPrice);
+                ChatUtils.log(Level.WARNING,"---total=" + total);
             }
             total += slotPrice;
             slotPrice = 0;
@@ -177,16 +179,17 @@ public class EventUtils {
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
         } catch (Exception ex) {
-            SellStick.getInstance().log(Level.SEVERE, "Invalid SellStick item set in config.");
+            ChatUtils.log(Level.SEVERE, "Invalid SellStick item set in config.");
             return false;
         }
 
-        if (p.getItemInHand().getType() == sellItem) {
-            p.getItemInHand().getItemMeta().getDisplayName();
-            if (p.getItemInHand().getItemMeta().getDisplayName().startsWith(StickConfig.instance.name)) {
-                return e.getClickedBlock().getType() == Material.CHEST
-                        || e.getClickedBlock().getType() == Material.TRAPPED_CHEST;
-            }
+        ItemStack pHand = p.getInventory().getItemInMainHand();
+
+        if (pHand.getType() != sellItem) return false;
+        Component pName = pHand.getItemMeta().displayName();
+        if (p.getInventory().getItemInMainHand().displayName().toString().startsWith(StickConfig.instance.name)) {
+            return e.getClickedBlock().getType() == Material.CHEST
+                    || e.getClickedBlock().getType() == Material.TRAPPED_CHEST;
         }
 
         return false;
