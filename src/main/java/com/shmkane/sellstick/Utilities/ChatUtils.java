@@ -2,9 +2,9 @@ package com.shmkane.sellstick.Utilities;
 
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.SellStick;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 
 public class ChatUtils {
@@ -23,14 +23,15 @@ public class ChatUtils {
         sender.sendMessage(StickConfig.instance.prefix + msg);
     }
 
+    //TODO Fix sendCommandNotProperMessage to make it simpler
     /**
      * Sent to 'sender' if their command was invalid.
      * @param sender Sender of the command
      * @param pdf PluginDescriptionFile object
      */
-    public static void sendCommandNotProperMessage(CommandSender sender, PluginDescriptionFile pdf) {
+    public static void sendCommandNotProperMessage(CommandSender sender, PluginMeta pdf) {
         // They typed something stupid here...
-        ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getFullName()
+        ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getName()
                 + " (MC " + SellStick.getInstance().getServer().getVersion() + ") by " + pdf.getAuthors().get(0));
         if (sender.hasPermission("sellstick.give")) {
             ChatUtils.msg(sender, ChatColor.GREEN

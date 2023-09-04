@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class PlayerListener implements Listener {
 
+    //TODO Add Barrels and Shulkers
     /**
      * Handles the actual clicking event of the player. Deprecated since getItemHand
      * in 1.9+ should specify which hand, but will keep since it allows for

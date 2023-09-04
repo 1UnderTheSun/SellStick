@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.Utilities.ItemUtils;
 import com.shmkane.sellstick.Utilities.ChatUtils;
+import io.papermc.paper.plugin.configuration.PluginMeta;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -17,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginDescriptionFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,20 +28,6 @@ import org.jetbrains.annotations.NotNull;
  * @author shmkane
  */
 public class SellStickCommand implements CommandExecutor, TabExecutor {
-
-    /**
-     * Instance of the plugin
-     **/
-    private final SellStick plugin;
-    /**
-     * Constructor of SellStickCommand Only one of these should be constructed in
-     * the onEnable of SellStick.java
-     *
-     * @param plugin Takes a SellStick object
-     */
-    public SellStickCommand(SellStick plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
@@ -68,9 +56,11 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
     /**
      * Handle the sellstick command here
      */
+    //TODO Fix all deprecation
+    //TODO Chat Color to be changed to NamedTextColor
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        PluginDescriptionFile pdf = plugin.getDescription();
+        PluginMeta pdf = SellStick.getInstance().getPluginMeta();
 
         if (args.length == 0) {
             ChatUtils.sendCommandNotProperMessage(sender, pdf);
@@ -79,23 +69,26 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("sellstick.reload")) {
                 try {
-                    plugin.getServer().getPluginManager().disablePlugin(plugin);
+                    //TODO Fix Reload to only change configuration rather than whole plugin
+                    SellStick.getInstance().getServer().getPluginManager().disablePlugin(SellStick.getInstance());
                     ChatUtils.msg(sender, ChatColor.RED + "Reloading Plugin");
-                    plugin.getServer().getPluginManager().enablePlugin(plugin);
+                    SellStick.getInstance().getServer().getPluginManager().enablePlugin(SellStick.getInstance());
                     ChatUtils.msg(sender, ChatColor.GREEN + "Plugin Reloaded");
                 } catch (Exception ex) {
                     ChatUtils.msg(sender, "Something went wrong! Check console for error");
-                    System.out.println(ex.getMessage());
+                    SellStick.getInstance().log(Level.SEVERE, ex.getMessage());
                 }
             } else {
-                ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getFullName() + " (MC "
-                        + this.plugin.getServer().getVersion() + ") by " + pdf.getAuthors().get(0));
+                //TODO Remove Redundant Shit
+                ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getAuthors() + " (MC "
+                        + SellStick.getInstance().getServer().getVersion() + ") by " + ().get(0));
             }
             return true;
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("give")) {
                 if (sender.hasPermission("sellstick.give")) {
-                    Player target = plugin.getServer().getPlayer(args[1]);
+                    Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
+                    //TODO Reduce Code in Command Class
                     if (target != null && target.isOnline()) {
 
                         int numSticks;
@@ -124,8 +117,8 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                             ItemMeta im = is.getItemMeta();
 
                             List<String> lores = new ArrayList<String>();
-
-                            im.setDisplayName(StickConfig.instance.name + UUID);
+                            //TODO Figure out how to change string to component
+                            im.displayName(Component.text(StickConfig.instance.name + UUID));
 
                             // Load values from config onto the stick lores array
                             for (int z = 0; z < StickConfig.instance.lore.size(); z++) {
