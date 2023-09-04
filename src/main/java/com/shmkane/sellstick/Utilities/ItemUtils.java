@@ -2,43 +2,106 @@ package com.shmkane.sellstick.Utilities;
 
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.SellStick;
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import io.papermc.paper.annotation.DoNotUse;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class ItemUtils {
 
-    //TODO: Replace all lore and item check with NBT
+    private UUID uuid = UUID.fromString("c5faa888-4b14-11ee-be56-0242ac120002");
 
-    /**
-     * @param itemStack Accepts an itemstack
-     * @return returns an enchanted item with durability 1(unbreaking)
-     */
+    //TODO: Add Lore to ItemStacks
+    //TODO: Add Name to ItemStacks
+
+
+    // Make an ItemStack Glow
     public static ItemStack glow(ItemStack itemStack) {
         itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        itemStack.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
         return itemStack;
     }
 
-    /**
-     * Determines if the stick is infinite. An infinte stick means that it can be
-     * used regardless of it's durabaility. For that matter, it's infinite if the
-     * item lore matches the infinite lore stated in the config.
-     * <p>
-     * IMPORTANT: If you change the infiniteLore in the config, you may break the
-     * sticks with the old lore.
-     *
-     * @param lores Given these lores from the stick
-     * @return True if infinite stick
-     */
+    // Check if an ItemStack is infinite
+    public static boolean isInfinite(ItemStack itemStack) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        return nbtItemStack.getBoolean("Infinite");
+    }
+
+    // Set an Itemstack with a NBT Tag of Infinite with a state
+    public ItemStack setInfinite(ItemStack itemStack, boolean state) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        nbtItemStack.setBoolean("Infinite", state);
+        nbtItemStack.setInteger("UsesRemaining", Integer.MAX_VALUE);
+        return NBT.itemStackFromNBT(nbtItemStack);
+    }
+
+    // Get uses Remaining from a SellStick
+    public static int getUses(ItemStack itemStack) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        return nbtItemStack.getInteger("UsesRemaining");
+    }
+
+    // Set uses to a SellStick
+    public ItemStack setUses(ItemStack itemStack, int uses) {
+
+        // NBT
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        nbtItemStack.setInteger("UsesRemaining", uses);
+        itemStack = NBT.itemStackFromNBT(nbtItemStack);
+
+        //TODO: Add colour support for LoreList
+
+        // Lore
+        List<Component> loreList = new ArrayList<>();
+        for(String s : StickConfig.instance.lore) {
+            loreList.add(MiniMessage.miniMessage().deserialize(s));
+        }
+        loreList.add(MiniMessage.miniMessage().deserialize(StickConfig.instance.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        // Set Lore List
+        itemStack.getItemMeta().lore(loreList);
+
+        return itemStack;
+    }
+
+    //TODO: Add use updated to lore
+
+    // Subtract a use from a Sellstick
+    public ItemStack subtractUses(ItemStack itemStack) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        nbtItemStack.setInteger("UsesRemaining", getUses(itemStack) - 1);
+        return NBT.itemStackFromNBT(nbtItemStack);
+    }
+
+    //TODO: Add Material
+
+    public ItemStack setSellStick(ItemStack itemStack) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        nbtItemStack.setUUID("SellStick", uuid);
+        return NBT.itemStackFromNBT(nbtItemStack);
+    }
+
+    public static boolean isSellstick(ItemStack itemStack) {
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+        return (nbtItemStack.getUUID("SellStick").toString() == "c5faa888-4b14-11ee-be56-0242ac120002");
+    }
+
+    @Deprecated @DoNotUse
     public static boolean isInfinite(List<String> lores) {
         return lores.get(StickConfig.instance.durabilityLine - 1).equalsIgnoreCase(StickConfig.instance.infiniteLore);
     }
@@ -53,6 +116,7 @@ public class ItemUtils {
      * @param lores Takes a string list
      * @return finds the uses in the lores and returns as int.
      */
+    @Deprecated @DoNotUse
     public static int getUsesFromLore(List<String> lores) {
 
         /*
@@ -123,6 +187,7 @@ public class ItemUtils {
      * @return a specially "encrypted" string that can be read to make sense by
      * further methods.
      */
+    @Deprecated @DoNotUse
     public static String parseDurabilityLine(List<String> lores) {
         StringBuilder found = new StringBuilder();
         int duraLine = StickConfig.instance.durabilityLine;
@@ -160,6 +225,7 @@ public class ItemUtils {
      * @param lores SellStick lores List
      * @return returns the number of uses the stick has
      */
+    @Deprecated @DoNotUse
     public static int handleUses(Player p, List<String> lores) {
         int uses = -1;
         if (!ItemUtils.isInfinite(lores)) {
@@ -198,7 +264,8 @@ public class ItemUtils {
      * @param is    Item stack object of the stick
      * @author MrGhetto
      */
-    @SuppressWarnings("deprecation")
+
+    @Deprecated @DoNotUse
     public static boolean postSale(List<String> lores, int uses, Player p, double total, ItemMeta im, ItemStack is) {
 
         if (!ItemUtils.isInfinite(lores)) {

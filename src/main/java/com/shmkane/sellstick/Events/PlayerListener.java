@@ -7,6 +7,7 @@ import com.shmkane.sellstick.Utilities.ItemUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,33 +27,24 @@ import java.util.List;
  */
 public class PlayerListener implements Listener {
 
-    /**
-     * Handles the actual clicking event of the player. Deprecated since getItemHand
-     * in 1.9+ should specify which hand, but will keep since it allows for
-     * backwards compatibility
-     * <p>
-     * {@link EventPriority} Should let all other plugins handle whether
-     * sellstick can be used.
-     *
-     * @param e The event
-     */
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
     public void onSellstickUse(PlayerInteractEvent e) {
         Player p = e.getPlayer();
 
         //TODO: Reduce Nested Ifs
 
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !p.isSneaking()) {
-            if (EventUtils.didClickChestWithSellStick(p, e)) {
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            // Check if clicked block is chest, barrel or shulker
+            if (EventUtils.didClickContainerWithSellStick(p, e)) {
 
                 // Check if another plugin is cancelling the event
-                if (e.isCancelled()) {
+                if(e.useInteractedBlock() == Event.Result.DENY){
                     ChatUtils.msg(p, StickConfig.instance.territoryMessage);
                     e.setCancelled(true);
                     return;
                 }
 
-                // Didn't have permission :(
+                // Checks if Player has the permission to use a sellstick
                 if (!p.hasPermission("sellstick.use")) {
                     ChatUtils.msg(p, StickConfig.instance.noPerm);
                     e.setCancelled(true);
@@ -81,11 +73,12 @@ public class PlayerListener implements Listener {
                 }
                 e.setCancelled(true);
             }
-        }else{
-            if(EventUtils.isSellStick(p, e)) {
-                ChatUtils.msg(p, StickConfig.instance.nonSellingRelated);
-                e.setCancelled(true);
-            }
+        }
+
+        // Checks if Player has the permission to use a sellstick
+        if (!p.hasPermission("sellstick.use")) {
+            ChatUtils.msg(p, StickConfig.instance.noPerm);
+            e.setCancelled(true);
         }
     }
 }

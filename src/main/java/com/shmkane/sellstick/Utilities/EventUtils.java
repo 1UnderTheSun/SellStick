@@ -4,23 +4,25 @@ import com.earth2me.essentials.IEssentials;
 import com.shmkane.sellstick.Configs.PriceConfig;
 import com.shmkane.sellstick.Configs.StickConfig;
 import com.shmkane.sellstick.SellStick;
+import io.papermc.paper.annotation.DoNotUse;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.brcdev.shopgui.exception.player.PlayerDataNotLoadedException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Comparator;
 import java.util.logging.Level;
 
 public class EventUtils {
 
     //TODO: Replace with NBT check
-    public static boolean isSellStick(Player p, PlayerInteractEvent e) {
+
+    @Deprecated @DoNotUse
+    public static boolean isSellStick(Player p) {
         Material sellItem;
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
@@ -178,8 +180,9 @@ public class EventUtils {
      */
 
     //TODO: Addition of Barrels and Shulkers
-    public static boolean didClickChestWithSellStick(Player p, PlayerInteractEvent e) {
+    public static boolean didClickContainerWithSellStick(Player p, PlayerInteractEvent e) {
         Material sellItem;
+
         try {
             sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
         } catch (Exception ex) {
@@ -191,9 +194,11 @@ public class EventUtils {
 
         if (pHand.getType() != sellItem) return false;
         Component pName = pHand.getItemMeta().displayName();
+
+        // Replace if Item has SellStick NBT
         if (p.getInventory().getItemInMainHand().displayName().toString().startsWith(StickConfig.instance.name)) {
-            return e.getClickedBlock().getType() == Material.CHEST
-                    || e.getClickedBlock().getType() == Material.TRAPPED_CHEST;
+            Block block = e.getClickedBlock();
+            return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
         }
 
         return false;
