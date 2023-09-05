@@ -18,134 +18,71 @@
 
 #The name of the item - displayname
 DisplayName: '&cSellStick'
-#
-# READ THE WARNING ABOVE! (line 10)
-#
-#For any Materials, use
-#If you use 1.8, use this link
-#https://helpch.at/docs/1.8/org/bukkit/Material.html
-#For 1.9, use this
-#https://helpch.at/docs/1.9/org/bukkit/Material.html
-#in general, replace the version in the link with the version you're using
-#
-#https://helpch.at/docs/YOUR_VERION_HERE/org/bukkit/Material.html
-#
-#If you're using latest version, use this
-#
-#https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html as a reference
-#
-#---------------------------#
-#YES IT MATTERS HOW YOU TYPE#
-###REVIEW THE LINKS ABOVE####
-#---------------------------#
-#
-#
-#Use the ABOVE LINKS to change this item
-ItemType: STICK #ONCE AGAIN, USE THE LINKS ABOVE FOR ITEM NAMES. Don't just guess. Otherwise you'll get errors.
-# READ THE WARNING ABOVE! (line 10)
-# I REALLY HOPE YOU LOOKED AT THE LINKS ABOVE
-#
-#The lore on the stick
-#When they hover over it, what do they see
-#Line 2 will always be the Finite or Infinite Lore
-#
-#
+
+# See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for Materials
+Material: STICK
+
+# The lore on the stick
+# When they hover over it, what do they see
+# Line 2 will always be the Finite or Infinite Lore
 StickLore:
-  - '&a&lRight click &con a chest to sell items inside!' #line 1
-  - '&bSellStick by &oshmkane' #line 2
-  - '&cCustomize this in the CONFIG!' #line 3
-  - '&cadd more lines' #line 4
-  - '&aLike this' #line 5
-#
-# READ THE WARNING ABOVE! (line 10)
-#
-#Do you want the stick to glow
-#As if it has an enchantment?
-#Set to true if you do.
-#Set to false for regular-item-look
+  - '&a&lRight click &con a chest to sell items inside!'
+  - '&bSellStick by &oshmkane'
+  - '&cCustomize this in the CONFIG!'
+  - '&cadd more lines'
+  - '&aLike this'
+
+# Whether the item will glow
 Glow: true
-#
-#
-#If they have a Finite stick(non-infinite)
-#Please try not to include any other numbers
-#in this lore
+
+# Lore for Finite Items
 FiniteLore: '&c%remaining% &fremaining uses'
-#
-#
-#If they have an infinite stick, the lore
-#This will be the 2nd line
+
+# Lore for Infinite Items
 InfiniteLore: '&4Infinite &cuses!'
-#
-#
-#---------------------------#
-#         IMPORTANT         #
-#---------------------------#
-#This is the line number where you want to display the durability
-#If you have an infinite stick, the Infinite Lore set above will be here
-#If you have a finite stick, the Finite lore set above will be here
-#Be VERY CAREFUL if you plan on changing this number
-#Especially after players have sellsticks!
-DurabilityLine: 2
-# Again, if you change this, previous sellsticks may break!
-#
-#Messages sent to the player will be prefixed with this
+
+# Plugin Prefix
 MessagePrefix: '&6[&eSellStick&6] '
-#
-#
-#When they sell the items what message should be displayed
-#---------------------------#
-#Use %price% for how much they gained
-#Use %balance% to show new balance
-#---------------------------#
+
+# When they sell the items what message should be displayed
+# Placeholders:
+#   Use %price% for how much they gained
+#   Use %balance% to show new balance
 SellMessage: '&cYou sold items for &f%price% &cand now have &f%balance%'
-#
-#
-#If they don't have permission to do something
+
+# No Permission Message
 NoPermissionMessage: '&cSorry, you don''t have permission for this!'
-#
-#
-#If they try using the stick in an invalid territory.
+
+# No Territory Access
 InvalidTerritoryMessage: '&cYou can''t use sell stick here!'
-# territory
-#
-#If the chest chest didnt have anything they could sell
-#Meaning, if the items in the chest didnt appear in the Price.yml
+
+# Empty Chest
 NotWorthMessage: '&cNothing worth selling inside'
-#
-#
-#What message is sent if they run out of uses?
+
+# SellStick Break Message
 BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
-#
-#
-#If they try to do something other than selling with the sellstick...
+
+# Unrelated Action
 NonSellingRelated: '&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)'
 
 
-#Choose between three different price interfaces, selects default if incorrect spelling/null
-#PricesYML (Default), ShopGUI, Essentials
+# Choose between three different price interfaces, selects default if incorrect spelling/null
+# PricesYML (Default), ShopGUI, Essentials
 PriceInterface: 'PricesYML'
 
-#The message to send to the Admin who gave the sticks
+# The message to send to the Admin who gave the sticks
 # Placeholders:
 #   %player - person who will get the sellstick
-#   %amount - amount of sellsticks that %player% will receive
-GiveMessage: '&aYou gave &e%player% &e&l%amount% &asell sticks!'
-#
-#
-#Message to send to the player who received the sticks
-# Placehlders:
+#   %amount - amount of SellSticks that %player% will receive
+GiveMessage: '&aYou gave &e%player% &e&l%amount% &aSellSticks!'
+
+# Message to send to the player who received the sticks
+# Placeholders:
 #   %amount% - money that the seller receives.
 ReceiveMessage: '&aYou''ve received &e&l%amount% &asell sticks!'
-#
-#Do you want a little noise to play when players sell something?
+
+# Whether to play a sound
 UseSound: true
-#
-#
-#That's it!
-#If you have questions, ask on Discord.
-#
-#
-#https://discord.com/invite/st9aMnF
-#Don't leave a negative review then expect me to help you with an issue
+
+# Debug Mode (Console Only)
 debug: false
-#Suggested: leave this false unless you want your console spammed with info.

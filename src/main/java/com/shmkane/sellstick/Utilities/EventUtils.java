@@ -2,205 +2,150 @@ package com.shmkane.sellstick.Utilities;
 
 import com.earth2me.essentials.IEssentials;
 import com.shmkane.sellstick.Configs.PriceConfig;
-import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Configs.SellstickConfig;
 import com.shmkane.sellstick.SellStick;
-import io.papermc.paper.annotation.DoNotUse;
 import net.brcdev.shopgui.ShopGuiPlusApi;
-import net.brcdev.shopgui.exception.player.PlayerDataNotLoadedException;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.*;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class EventUtils {
 
-    //TODO: Replace with NBT check
-
-    @Deprecated @DoNotUse
-    public static boolean isSellStick(Player p) {
-        Material sellItem;
-        try {
-            sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
-        } catch (Exception ex) {
-            ChatUtils.log(Level.SEVERE, "Invalid SellStick item set in config.");
-            return false;
-        }
-
-        return p.getActiveItem().getType() == sellItem && p.getItemInHand().getItemMeta().getDisplayName() != null
-                && p.getItemInHand().getItemMeta().getDisplayName().startsWith(StickConfig.instance.name);
-
-    }
-
-    /**
-     * Now check the worth of what we're about to sell.
-     *
-     * @param c Inventory Holder is a chest
-     * @param e Triggers on a playerinteract event
-     * @return the worth
-     */
-    //TODO: Fix Deprecation
     //TODO: Reduce Code
-    public static double calculateWorth(InventoryHolder c, PlayerInteractEvent e) {
+    public static double calculateContainerWorth(PlayerInteractEvent event) {
 
-        ItemStack[] contents = c.getInventory().getContents();
+        //TODO: Check if getState is actually required?
+        InventoryHolder container = (InventoryHolder) Objects.requireNonNull(event.getClickedBlock()).getState();
+
+        ItemStack[] containerContents = container.getInventory().getContents();
 
         double total = 0;
-        double slotPrice = 0;
-        double price = 0;
 
-        StickConfig.SellingInterface si = StickConfig.instance.getSellInterface();
+        SellstickConfig.SellingInterface sellInterface = SellstickConfig.instance.getSellInterface();
 
-        if (StickConfig.instance.debug) {
-            ChatUtils.log(Level.WARNING,"1-Getting prices from " + si);
-            ChatUtils.log(Level.WARNING,"2-Clicked Chest(size=" + c.getInventory().getSize() + "):");
-        }
+        for (ItemStack itemstack : containerContents) {
+            // Reset each variable on each itemstack
+            double price = 0;
+            double slotPrice;
 
-        for (int i = 0; i < c.getInventory().getSize(); i++) {
+            switch (sellInterface) {
+                case PRICESYML:
+                    ConfigurationSection pricesSection = PriceConfig.instance.getConfig().getConfigurationSection("prices");
 
-            try {
-                if (si == StickConfig.SellingInterface.PRICESYML) { // Not essW, not shop
+                    // Initialize a map to store prices
+                    assert pricesSection != null;
+                    Map<String, Object> prices = pricesSection.getValues(false);
 
-                    for (String key : PriceConfig.instance.getPrices()) {
-
-                        int data;
-                        String name;
-
-                        if (!key.contains(":")) {
-                            data = 0;
-                            name = key;
-                        } else {
-                            name = (key.split(":"))[0];
-                            data = Integer.parseInt(key.split(":")[1]);
+                    // Check Price of ItemStack
+                    for (Map.Entry<String, Object> entry : prices.entrySet()) {
+                        if(itemstack.getType().toString().equalsIgnoreCase(entry.getKey())) {
+                            // TODO: Add a check if someone is stupid enough to make the block value a string...
+                            price = (Double) entry.getValue();
                         }
-
-                        if ((contents[i].getType().toString().equalsIgnoreCase(name)
-                                || (ChatUtils.isNumeric(name) && contents[i].getType().getId() == Integer.parseInt(name)))
-                                && contents[i].getDurability() == data) {
-                            price = Double.parseDouble(PriceConfig.instance.getConfig().getString("prices." + key));
-
-                        }
-
-                        if (StickConfig.instance.debug) {
-                            if (price > 0) {
-                                ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
-                                ChatUtils.log(Level.WARNING,"-Price: " + price);
-                            }
-                        }
-
-                    }
-                } else if (si == StickConfig.SellingInterface.ESSWORTH) {
-                    try {
-                        Object ess = SellStick.getInstance().getServer().getPluginManager().getPlugin("Essentials");
-
-                        price = ((IEssentials) ess).getWorth().getPrice((IEssentials) ess, contents[i]).doubleValue();
-
-                        if (StickConfig.instance.debug) {
-                            if (price > 0)
-                                ChatUtils.log(Level.WARNING,"-Price: " + price);
-                            ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
-                        }
-
-
-                    } catch (Exception exception) {
-                        ChatUtils.log(Level.WARNING, "Something went wrong enabling Essentials. If you don't use it, you can ignore this message.");
                     }
 
-                } else if (si == StickConfig.SellingInterface.SHOPGUI) {
-
-                    price = ShopGuiPlusApi.getItemStackPriceSell(e.getPlayer(), contents[i]);
+                    break;
+                case SHOPGUI:
+                    price = ShopGuiPlusApi.getItemStackPriceSell(itemstack);
 
                     if (price < 0) {
                         price = 0;
                     }
 
-                    if (StickConfig.instance.debug) {
-                        if (price > 0)
-                            ChatUtils.log(Level.WARNING,"-Price: " + price);
-                        ChatUtils.log(Level.WARNING,contents[i].getType() + " x " + contents[i].getAmount());
-                    }
+                    break;
+                case ESSWORTH:
+                    IEssentials ess = (IEssentials) SellStick.getInstance().getServer().getPluginManager().getPlugin("Essentials");
 
-                }
+                    assert ess != null;
+                    price = ess.getWorth().getPrice(ess, itemstack).doubleValue();
 
-                if (StickConfig.instance.debug) {
-                    ChatUtils.log(Level.WARNING,"--Price of (" + contents[i].getType() + "): " + price);
-                }
-
-                int amount;
-                if (si != StickConfig.SellingInterface.SHOPGUI) {
-                    amount = contents[i].getAmount();
-                } else {
-                    amount = 1;
-                }
-                slotPrice = price * amount;
-
-                if (slotPrice > 0) {
-                    ItemStack sell = contents[i];
-                    c.getInventory().remove(sell);
-                    e.getClickedBlock().getState().update();
-                }
-
-            } catch (Exception ex) {
-
-                if (StickConfig.instance.debug) {
-                    if (!(ex instanceof NullPointerException))
-                        ChatUtils.log(Level.WARNING, ex.toString());
-                }
-
-                if (si == StickConfig.SellingInterface.SHOPGUI && ex instanceof PlayerDataNotLoadedException) {
-                    ChatUtils.log(Level.SEVERE,"Player should relog to fix this.");
-                    e.getPlayer().sendMessage(ChatColor.DARK_RED + "Please re-log to use SellStick.");
-                    return 0;
-                }
+                    break;
             }
-            if (StickConfig.instance.debug && slotPrice > 0) {
-                ChatUtils.log(Level.WARNING,"---slotPrice=" + slotPrice);
-                ChatUtils.log(Level.WARNING,"---total=" + total);
+
+            int amount = itemstack.getAmount();
+
+            // ShopGUI already implements amount within the API
+            if(sellInterface == SellstickConfig.SellingInterface.SHOPGUI) {
+                amount = 1;
+            }
+
+            slotPrice = price * amount;
+
+            if(slotPrice > 0) {
+                container.getInventory().remove(itemstack);
             }
             total += slotPrice;
-            slotPrice = 0;
-            price = 0;
         }
-        if (StickConfig.instance.debug)
-            System.out.println();
-
         return total;
     }
 
-    /**
-     * Method for checking if a player just clicked a chest with a sellstick
-     *
-     * @param p Player that clicked the chest
-     * @param e On a player interact event
-     * @return True if the item in hand was a sellstick && player clicked a chest
-     */
+    // Checks if clicked block is on a chest, barrel or Shulker Box with a SellStick
+    public static boolean didClickContainerWithSellStick(PlayerInteractEvent event) {
 
-    //TODO: Addition of Barrels and Shulkers
-    public static boolean didClickContainerWithSellStick(Player p, PlayerInteractEvent e) {
-        Material sellItem;
+        ItemStack playerHand = event.getPlayer().getInventory().getItemInMainHand();
 
-        try {
-            sellItem = Material.getMaterial(StickConfig.instance.item.toUpperCase());
-        } catch (Exception ex) {
-            ChatUtils.log(Level.SEVERE, "Invalid SellStick item set in config.");
-            return false;
+        if (!ItemUtils.isSellStick(playerHand)) return false;
+
+        Block block = event.getClickedBlock();
+        return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
+    }
+
+    // Handles the SellStick in SaleEvent and PostSaleEvent - (Originally Made by MrGhetto)
+    public static boolean saleEvent(Player player, ItemStack sellStick, int uses, double total) {
+
+        if (!ItemUtils.isInfinite(sellStick)) {
+            ItemUtils.subtractUses(sellStick);
         }
 
-        ItemStack pHand = p.getInventory().getItemInMainHand();
+        double multiplier = ItemUtils.setMultiplier(player);
 
-        if (pHand.getType() != sellItem) return false;
-        Component pName = pHand.getItemMeta().displayName();
+        EconomyResponse r;
 
-        // Replace if Item has SellStick NBT
-        if (p.getInventory().getItemInMainHand().displayName().toString().startsWith(StickConfig.instance.name)) {
-            Block block = e.getClickedBlock();
-            return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
+        if (multiplier != 1) {
+            r = SellStick.getInstance().getEcon().depositPlayer(player, total * multiplier);
         }
 
-        return false;
+        r = SellStick.getInstance().getEcon().depositPlayer(player, total);
+
+        boolean success = false;
+
+        if (r.transactionSuccess()) {
+            success = true;
+            //FIXME: What the fuck in god's name
+            if (SellstickConfig.instance.sellMessage.contains("\\n")) {
+                String[] send = SellstickConfig.instance.sellMessage.split("\\\\n");
+                for (String msg : send) {
+                    ChatUtils.sendMsg(player, msg.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance)).replace("%price%",
+                            SellStick.getInstance().getEcon().format(r.amount)),true);
+                }
+            }
+            else {
+                ChatUtils.sendMsg(player, SellstickConfig.instance.sellMessage.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance))
+                        .replace("%price%", SellStick.getInstance().getEcon().format(r.amount)), true);
+            }
+
+            ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + r.amount + " and now has " + r.balance);
+        }
+        else {
+            ChatUtils.sendMsg(player, String.format("An error occurred: %s", r.errorMessage), true);
+        }
+
+        if (uses - 1 == 0) {
+            player.getInventory().remove(player.getInventory().getItemInMainHand());
+            ChatUtils.sendMsg(player, SellstickConfig.instance.brokenStick, true);
+        }
+
+        return success;
+
     }
 }

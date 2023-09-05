@@ -1,10 +1,9 @@
 package com.shmkane.sellstick.Events;
 
-import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Configs.SellstickConfig;
 import com.shmkane.sellstick.Utilities.ChatUtils;
 import com.shmkane.sellstick.Utilities.EventUtils;
 import com.shmkane.sellstick.Utilities.ItemUtils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -13,72 +12,89 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.util.List;
 
-/**
- * The PlayerListener class will handle all the events from the player.
- * Furthermore, it contains code that will take a stick's lore/display name, and
- * chest interaction events.
- *
- * @author shmkane
- */
 public class PlayerListener implements Listener {
 
+    @Deprecated
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
-    public void onSellstickUse(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-
-        //TODO: Reduce Nested Ifs
-
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+    public void onSellstickUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // Check if clicked block is chest, barrel or shulker
-            if (EventUtils.didClickContainerWithSellStick(p, e)) {
+            if (EventUtils.didClickContainerWithSellStick(event)) {
 
                 // Check if another plugin is cancelling the event
-                if(e.useInteractedBlock() == Event.Result.DENY){
-                    ChatUtils.msg(p, StickConfig.instance.territoryMessage);
-                    e.setCancelled(true);
+                if(event.useInteractedBlock() == Event.Result.DENY){
+                    ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
+                    event.setCancelled(true);
                     return;
                 }
 
-                // Checks if Player has the permission to use a sellstick
-                if (!p.hasPermission("sellstick.use")) {
-                    ChatUtils.msg(p, StickConfig.instance.noPerm);
-                    e.setCancelled(true);
+                // Checks if Player has the permission to use a SellStick
+                if (!player.hasPermission("sellstick.use")) {
+                    ChatUtils.sendMsg(player, SellstickConfig.instance.noPerm, true);
+                    event.setCancelled(true);
                     return;
                 }
 
-                ItemStack is = p.getInventory().getItemInMainHand();
-                ItemMeta im = is.getItemMeta();
+                ItemStack sellStick = player.getInventory().getItemInMainHand();
 
-                List<Component> lores = im.lore();
+                int uses = ItemUtils.getUses(sellStick);
 
-                //TODO: Change to component for lores
-                int uses = ItemUtils.handleUses(p, lores);
-                //TODO: Make sure state isn't null
-                InventoryHolder c = (InventoryHolder) e.getClickedBlock().getState();
-
-                double total = EventUtils.calculateWorth(c, e);
+                double total = EventUtils.calculateContainerWorth(event);
 
                 if (total > 0) {
                     //TODO: Change to component for lores
-                    if (ItemUtils.postSale(lores, uses, p, total, im, is) && StickConfig.instance.sound) {
-                        p.playSound(e.getClickedBlock().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
+                    if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.instance.sound) {
+
+                        assert event.getInteractionPoint() != null;
+                        player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
                     }
                 } else {
-                    ChatUtils.msg(p, StickConfig.instance.nothingWorth);
+                    ChatUtils.sendMsg(player, SellstickConfig.instance.nothingWorth, true);
                 }
-                e.setCancelled(true);
+                event.setCancelled(true);
             }
         }
+    }
 
-        // Checks if Player has the permission to use a sellstick
-        if (!p.hasPermission("sellstick.use")) {
-            ChatUtils.msg(p, StickConfig.instance.noPerm);
-            e.setCancelled(true);
+    //FIXME: Check if it works as intended
+    @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
+    public void onSellstickUseNew(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
+
+        // Check if clicked block is chest, barrel or shulker
+        if (!EventUtils.didClickContainerWithSellStick(event)) return;
+
+        // Check if another plugin is cancelling the event
+        if(event.useInteractedBlock() == Event.Result.DENY){
+            ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
+            event.setCancelled(true);
+            return;
         }
+        // Checks if Player has the permission to use a SellStick
+        if (!player.hasPermission("sellstick.use")) {
+            ChatUtils.sendMsg(player, SellstickConfig.instance.noPerm, true);
+            event.setCancelled(true);
+            return;
+        }
+
+        ItemStack sellStick = player.getInventory().getItemInMainHand();
+
+        int uses = ItemUtils.getUses(sellStick);
+        double total = EventUtils.calculateContainerWorth(event);
+
+        if (total > 0) {
+            if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.instance.sound) {
+
+                assert event.getInteractionPoint() != null;
+                player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
+            }
+        } else {
+            ChatUtils.sendMsg(player, SellstickConfig.instance.nothingWorth, true);
+        }
+        event.setCancelled(true);
     }
 }
