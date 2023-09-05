@@ -1,65 +1,36 @@
 package com.shmkane.sellstick.Utilities;
 
-import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Configs.SellstickConfig;
 import com.shmkane.sellstick.SellStick;
-import io.papermc.paper.plugin.configuration.PluginMeta;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
 
 
 public class ChatUtils {
-    /**
-     * This will send a player a message. If message is empty, it won't send
-     * anything.
-     *
-     * @param sender The target player
-     * @param msg    the message
-     */
-    public static void msg(CommandSender sender, String msg) {
-        if (msg.isEmpty()) {
-            return;
-        }
 
-        sender.sendMessage(StickConfig.instance.prefix + msg);
+    // Send Messages
+    public static void sendMsg(CommandSender sender, String string, boolean showPrefix) {
+        Component msg = MiniMessage.miniMessage().deserialize((showPrefix)?SellstickConfig.instance.prefix.concat(string):string);
+         if (sender instanceof ConsoleCommandSender) log(Level.INFO, string);
+         else if (sender instanceof Player) sender.sendMessage(msg);
     }
 
-    //TODO Fix sendCommandNotProperMessage to make it simpler
-    /**
-     * Sent to 'sender' if their command was invalid.
-     * @param sender Sender of the command
-     * @param pdf PluginDescriptionFile object
-     */
-    public static void sendCommandNotProperMessage(CommandSender sender, PluginMeta pdf) {
-        // They typed something stupid here...
-        ChatUtils.msg(sender, ChatColor.GRAY + "" + ChatColor.ITALIC + pdf.getName()
-                + " (MC " + SellStick.getInstance().getServer().getVersion() + ") by " + pdf.getAuthors().get(0));
+    public static void sendCommandNotProperMessage(CommandSender sender) {
         if (sender.hasPermission("sellstick.give")) {
-            ChatUtils.msg(sender, ChatColor.GREEN
-                    + "/SellStick give <player> <amount> (<uses>/infinite)");
+            ChatUtils.sendMsg(sender, NamedTextColor.GREEN + "/SellStick give <player> <amount> (<uses>/infinite)", true);
+        }
+        if (sender.hasPermission("sellstick.reload")) {
+            ChatUtils.sendMsg(sender, NamedTextColor.GREEN + "/SellStick reload", true);
         }
     }
 
-    /**
-     * Given a string, check if it's numeric.
-     *
-     * @param str Given a string
-     * @return Check if it is a number.
-     */
-    public static boolean isNumeric(String str) {
-        try {
-            Double.parseDouble(str);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
-    }
-
-
-    /**
-     * Server logger
-     **/
+    // Server Logger
     public static void log(Level level, String string) {
         SellStick.plugin.getLogger().log(level, string);
     }

@@ -1,33 +1,20 @@
 package com.shmkane.sellstick.Configs;
 
 import java.io.File;
-import java.util.Set;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-/**
- * Handles the opeations of the config.yml
- *
- * @author shmkane
- */
+// Handles Prices.YML
 public class PriceConfig {
-    /**
-     * Instance of PriceConfig
-     **/
+
+    // Instance of Price Configuration
     public static PriceConfig instance = new PriceConfig();
-    /**
-     * Instance of the file
-     **/
-    public File conf;
 
-    private Set<String> prices;
+    // Local instance of configuration
+    private File conf;
 
-    /**
-     * Sets up default Prices file with some arbitrary values.
-     *
-     * @param dir Location of the file
-     */
+    // Setup prices.yml
+    // TODO: Make a Setup function rather than use one for each configuration
     public void setup(File dir) {
         if (!dir.exists()) {
             dir.mkdirs();
@@ -51,27 +38,15 @@ public class PriceConfig {
                 e.printStackTrace();
             }
         }
-
-        prices = getConfig().getConfigurationSection("prices").getKeys(false);
     }
 
-    /**
-     * Returns the PriceConfig
-     *
-     * @return FileConfiguration object of Prices.yml
-     */
+    // Return Prices.Yml
     public FileConfiguration getConfig() {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(this.conf);
-        return config;
+        return YamlConfiguration.loadConfiguration(this.conf);
     }
 
-    /**
-     * Method writes to the config file
-     *
-     * @param dir Location of the file
-     * @param loc Name of the field to edit
-     * @param obj Object with new information to set/replace loc.
-     */
+    // Write Config File
+    // TODO: Use function and make it have no errors
     public void write(File dir, String loc, Object obj) {
         if (!dir.exists()) {
             dir.mkdirs();
@@ -84,14 +59,5 @@ public class PriceConfig {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Return a set of the prices;
-     *
-     * @return The prices in the config.
-     */
-    public Set<String> getPrices() {
-        return prices;
     }
 }

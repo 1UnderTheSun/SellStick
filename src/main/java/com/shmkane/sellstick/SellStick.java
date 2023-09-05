@@ -1,7 +1,7 @@
 package com.shmkane.sellstick;
 
 import com.shmkane.sellstick.Configs.PriceConfig;
-import com.shmkane.sellstick.Configs.StickConfig;
+import com.shmkane.sellstick.Configs.SellstickConfig;
 import com.shmkane.sellstick.Events.PlayerListener;
 import com.shmkane.sellstick.Utilities.ChatUtils;
 import net.milkbowl.vault.economy.Economy;
@@ -10,7 +10,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
-/**
+/*
  * SellStick is a Minecraft plugin that allows customizable
  * selling of chest, shulker and barrel contents.
  *
@@ -21,8 +21,7 @@ public class SellStick extends JavaPlugin {
 
     private static Economy econ = null;
     public static SellStick plugin;
-    public boolean ShopGUIEnabled = false;
-    public boolean EssentialsEnabled = false;
+    public boolean ShopGUIEnabled, EssentialsEnabled = false;
 
     /**
      * Initial plugin setup. Creation and loading of YML files.
@@ -42,10 +41,10 @@ public class SellStick extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        //TODO: Remove???
+        //TODO: Initialise Configurations
         saveDefaultConfig();
         //Load Variables, Listeners and Commands
-        loadDependencies();
+        loadInterface();
         loadClasses();
     }
 
@@ -53,17 +52,21 @@ public class SellStick extends JavaPlugin {
     public void reload() {
         // Update config file
         reloadConfig();
-        // Update dependencies
-        loadDependencies();
+        // Check soft dependencies and update interface
+        loadInterface();
         // Update config vars
-        StickConfig.instance.setup(getDataFolder());
+        SellstickConfig.instance.setup(getDataFolder());
         PriceConfig.instance.setup(getDataFolder());
     }
 
-    public void loadDependencies() {
+    // Check soft dependencies and update interface
+    public void loadInterface() {
         // Check Soft Dependencies
         ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
         EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+
+        // Set the price interface the plugin will be using
+        SellstickConfig.instance.setSellInterface(SellstickConfig.instance.PriceInterface);
     }
 
     public void loadClasses() {
