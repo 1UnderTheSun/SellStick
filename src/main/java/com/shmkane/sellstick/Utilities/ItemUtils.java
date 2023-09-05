@@ -11,7 +11,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -31,10 +30,9 @@ public class ItemUtils {
 
 
     // Make an ItemStack Glow
-    public static ItemStack glow(ItemStack itemStack) {
+    public static void glow(ItemStack itemStack) {
         itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         itemStack.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        return itemStack;
     }
 
     // Check if an ItemStack is infinite
@@ -58,7 +56,7 @@ public class ItemUtils {
     }
 
     // Set uses to a SellStick
-    public ItemStack setUses(ItemStack itemStack, int uses) {
+    public static void setUses(ItemStack itemStack, int uses) {
 
         // NBT
         ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
@@ -76,7 +74,6 @@ public class ItemUtils {
         // Set Lore List
         itemStack.getItemMeta().lore(loreList);
 
-        return itemStack;
     }
 
     //TODO: Add use updated to lore
