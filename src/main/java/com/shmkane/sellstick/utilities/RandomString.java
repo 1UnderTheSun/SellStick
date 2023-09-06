@@ -1,4 +1,4 @@
-package com.shmkane.sellstick.Utilities;
+package com.shmkane.sellstick.utilities;
 
 import java.util.Random;
 
@@ -10,14 +10,14 @@ public class RandomString {
     //TODO: Reduce to one function and place in ItemUtils??
     private static final char[] symbols;
 
-    /**
+    /*
       Just generates random color code combinations Only symbols 0-9 and a-f (for
       color codes)
 
       This is used so I can make an invisible message. Purpose being, items don't
       stack unless their metadata is the same. By having random(invisible) codes
       SellSticks will never stack
-     **/
+     */
     static {
         StringBuilder tmp = new StringBuilder();
         for (char ch = '0'; ch <= '9'; ++ch)

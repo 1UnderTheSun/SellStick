@@ -1,6 +1,6 @@
-package com.shmkane.sellstick.Utilities;
+package com.shmkane.sellstick.utilities;
 
-import com.shmkane.sellstick.Configs.SellstickConfig;
+import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.SellStick;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

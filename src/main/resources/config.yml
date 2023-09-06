@@ -1,88 +1,54 @@
-#############################
-####Sell Stick by shmkane####
-###Plugin Version: 1.15.2v5##
-#############################
-#
-#############################
-#######Stick Settings########
-#############################
-#
-#---------------------------#
-#          WARNING          #
-#---------------------------#
-# If players have a sellsticks,
-# Changing any of this will
-# make existing Sellsticks
-# stop working!
-#---------------------------#
-
-#The name of the item - displayname
-DisplayName: '&cSellStick'
-
-# See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for Materials
-Material: STICK
-
-# The lore on the stick
-# When they hover over it, what do they see
-# Line 2 will always be the Finite or Infinite Lore
-StickLore:
-  - '&a&lRight click &con a chest to sell items inside!'
-  - '&bSellStick by &oshmkane'
-  - '&cCustomize this in the CONFIG!'
-  - '&cadd more lines'
-  - '&aLike this'
-
-# Whether the item will glow
-Glow: true
-
-# Lore for Finite Items
-FiniteLore: '&c%remaining% &fremaining uses'
-
-# Lore for Infinite Items
-InfiniteLore: '&4Infinite &cuses!'
-
-# Plugin Prefix
-MessagePrefix: '&6[&eSellStick&6] '
-
-# When they sell the items what message should be displayed
-# Placeholders:
-#   Use %price% for how much they gained
-#   Use %balance% to show new balance
-SellMessage: '&cYou sold items for &f%price% &cand now have &f%balance%'
-
-# No Permission Message
-NoPermissionMessage: '&cSorry, you don''t have permission for this!'
-
-# No Territory Access
-InvalidTerritoryMessage: '&cYou can''t use sell stick here!'
-
-# Empty Chest
-NotWorthMessage: '&cNothing worth selling inside'
-
-# SellStick Break Message
-BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
-
-# Unrelated Action
-NonSellingRelated: '&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)'
-
-
 # Choose between three different price interfaces, selects default if incorrect spelling/null
 # PricesYML (Default), ShopGUI, Essentials
 PriceInterface: 'PricesYML'
 
-# The message to send to the Admin who gave the sticks
-# Placeholders:
-#   %player - person who will get the sellstick
-#   %amount - amount of SellSticks that %player% will receive
-GiveMessage: '&aYou gave &e%player% &e&l%amount% &aSellSticks!'
+Item:
+  DisplayName: '&cSellStick'
+  # Set the Material of the SellStick
+  # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for Materials
+  Material: STICK
+  StickLore:
+    - '&a&lRight click &con a chest to sell items inside!'
+  Glow: true
+  # Dependent on if item is infinite
+  FiniteLore: '&c%remaining% &fremaining uses'
+  InfiniteLore: '&4Infinite &cuses!'
+  UseSound: true
 
-# Message to send to the player who received the sticks
-# Placeholders:
-#   %amount% - money that the seller receives.
-ReceiveMessage: '&aYou''ve received &e&l%amount% &asell sticks!'
+Messages:
+  PluginPrefix: '&6[&eSellStick&6] '
 
-# Whether to play a sound
-UseSound: true
+  # When they sell the items what message should be displayed
+  # Placeholders:
+  #   Use %price% for how much they gained
+  #   Use %balance% to show new balance
+  SellMessage: '&cYou sold items for &f%price% &cand now have &f%balance%'
 
-# Debug Mode (Console Only)
-debug: false
+  # No Permission Message
+  NoPermissionMessage: '&cSorry, you don''t have permission for this!'
+
+  # No Territory Access
+  InvalidTerritoryMessage: '&cYou can''t use sell stick here!'
+
+  # Empty Chest
+  NotWorthMessage: '&cNothing worth selling inside'
+
+  # SellStick Break Message
+  BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
+
+  # Unrelated Action
+  NonSellingRelated: '&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)'
+
+  # The message to send to the Admin who gave the sticks
+  # Placeholders:
+  #   %player - person who will get the sellstick
+  #   %amount - amount of SellSticks that %player% will receive
+  GiveMessage: '&aYou gave &e%player% &e&l%amount% &aSellSticks!'
+
+  # Message to send to the player who received the sticks
+  # Placeholders:
+  #   %amount% - money that the seller receives.
+  ReceiveMessage: '&aYou''ve received &e&l%amount% &asell sticks!'
+
+
+

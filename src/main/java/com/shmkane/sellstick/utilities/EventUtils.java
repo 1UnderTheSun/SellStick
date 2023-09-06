@@ -1,8 +1,8 @@
-package com.shmkane.sellstick.Utilities;
+package com.shmkane.sellstick.utilities;
 
 import com.earth2me.essentials.IEssentials;
-import com.shmkane.sellstick.Configs.PriceConfig;
-import com.shmkane.sellstick.Configs.SellstickConfig;
+import com.shmkane.sellstick.configs.PriceConfig;
+import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.SellStick;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -15,16 +15,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 
 public class EventUtils {
 
-    //TODO: Reduce Code
     public static double calculateContainerWorth(PlayerInteractEvent event) {
 
-        //TODO: Check if getState is actually required?
         InventoryHolder container = (InventoryHolder) Objects.requireNonNull(event.getClickedBlock()).getState();
 
         ItemStack[] containerContents = container.getInventory().getContents();
@@ -49,8 +48,7 @@ public class EventUtils {
                     // Check Price of ItemStack
                     for (Map.Entry<String, Object> entry : prices.entrySet()) {
                         if(itemstack.getType().toString().equalsIgnoreCase(entry.getKey())) {
-                            // TODO: Add a check if someone is stupid enough to make the block value a string...
-                            price = (Double) entry.getValue();
+                            price = Double.parseDouble((String) entry.getValue());
                         }
                     }
 
@@ -90,13 +88,18 @@ public class EventUtils {
     }
 
     // Checks if clicked block is on a chest, barrel or Shulker Box with a SellStick
+    @Deprecated
     public static boolean didClickContainerWithSellStick(PlayerInteractEvent event) {
-
         ItemStack playerHand = event.getPlayer().getInventory().getItemInMainHand();
 
-        if (!ItemUtils.isSellStick(playerHand)) return false;
+        if (ItemUtils.isSellStick(playerHand)) return false;
 
         Block block = event.getClickedBlock();
+        return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
+    }
+
+    // Checks if clicked block is on a chest, barrel or shulker box
+    public static boolean didClickSellStickBlock(Block block) {
         return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
     }
 
@@ -107,7 +110,7 @@ public class EventUtils {
             ItemUtils.subtractUses(sellStick);
         }
 
-        double multiplier = ItemUtils.setMultiplier(player);
+        double multiplier = setMultiplier(player);
 
         EconomyResponse r;
 
@@ -146,5 +149,24 @@ public class EventUtils {
         }
 
         return success;
+    }
+
+    static double setMultiplier(Player player) {
+        /*
+         * Permissions based multiplier check. If user doesn't have access to
+         * sellstick.multiplier.x permission Multiplier defaults to 1 as seen below.
+         */
+        double multiplier = 1;
+
+        for (PermissionAttachmentInfo perm : player.getEffectivePermissions()) {
+            if (perm.getPermission().startsWith("sellstick.multiplier")) {
+                String stringPerm = perm.getPermission();
+                String permSection = stringPerm.replaceAll("sellstick.multiplier.", "");
+                if (Double.parseDouble(permSection) > multiplier) {
+                    multiplier = Double.parseDouble(permSection);
+                }
+            }
+        }
+        return multiplier;
     }
 }

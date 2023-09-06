@@ -1,8 +1,8 @@
 package com.shmkane.sellstick;
 
-import com.shmkane.sellstick.Configs.SellstickConfig;
-import com.shmkane.sellstick.Utilities.ChatUtils;
-import com.shmkane.sellstick.Utilities.CommandUtils;
+import com.shmkane.sellstick.configs.SellstickConfig;
+import com.shmkane.sellstick.utilities.ChatUtils;
+import com.shmkane.sellstick.utilities.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -106,7 +106,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             // Give sell sticks
             for (int i = 0; i < numSticks; i++) {
                 // TODO: Check if inventory is full or has enough slots??
-                CommandUtils.giveSellStick(target, uses, isInfinite);
+                CommandUtils.giveSellStick(target, uses);
             }
 
             ChatUtils.sendMsg(target, SellstickConfig.instance.receiveMessage.replace("%amount%",

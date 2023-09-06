@@ -1,6 +1,6 @@
-package com.shmkane.sellstick.Utilities;
+package com.shmkane.sellstick.utilities;
 
-import com.shmkane.sellstick.Configs.SellstickConfig;
+import com.shmkane.sellstick.configs.SellstickConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -10,9 +10,9 @@ import java.util.logging.Level;
 
 public class CommandUtils {
 
-    public static void giveSellStick(Player target, int uses, boolean isInfinite) {
+    public static void giveSellStick(Player target, int uses) {
 
-        // FIXME: Do Items stack if they have a random NBT? If they don't stack, lets get rid of this random string shit
+        // TODO: Do Items stack if they have a random NBT? If they don't stack, lets get rid of this random string shit
         // This assigns a random string to the item meta so that the item cannot be stacked
         RandomString random = new RandomString(5);
 
@@ -27,7 +27,6 @@ public class CommandUtils {
             return;
         }
 
-        // TODO: CreateSellStick function ???
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Set display name
@@ -38,13 +37,13 @@ public class CommandUtils {
         ItemUtils.setUses(itemStack, uses);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS); //Maybe add after item should be glowable?
 
-        // Apply meta to item stack
-        itemStack.setItemMeta(itemMeta);
-
         // Add glow if required
         if (SellstickConfig.instance.glow) {
             ItemUtils.glow(itemStack);
         }
+
+        // Apply meta to item stack
+        itemStack.setItemMeta(itemMeta);
 
         // Add to inventory
         target.getInventory().addItem(itemStack);

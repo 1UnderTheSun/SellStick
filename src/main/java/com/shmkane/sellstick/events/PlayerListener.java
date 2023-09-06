@@ -1,9 +1,10 @@
-package com.shmkane.sellstick.Events;
+package com.shmkane.sellstick.events;
 
-import com.shmkane.sellstick.Configs.SellstickConfig;
-import com.shmkane.sellstick.Utilities.ChatUtils;
-import com.shmkane.sellstick.Utilities.EventUtils;
-import com.shmkane.sellstick.Utilities.ItemUtils;
+import com.shmkane.sellstick.configs.SellstickConfig;
+import com.shmkane.sellstick.utilities.ChatUtils;
+import com.shmkane.sellstick.utilities.CommandUtils;
+import com.shmkane.sellstick.utilities.EventUtils;
+import com.shmkane.sellstick.utilities.ItemUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,15 +19,15 @@ public class PlayerListener implements Listener {
 
     @Deprecated
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
-    public void onSellstickUse(PlayerInteractEvent event) {
+    public void onSellstickUseOld(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        //TODO: Reduce Nested Ifs
+
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // Check if clicked block is chest, barrel or shulker
             if (EventUtils.didClickContainerWithSellStick(event)) {
 
                 // Check if another plugin is cancelling the event
-                if(event.useInteractedBlock() == Event.Result.DENY){
+                if (event.useInteractedBlock() == Event.Result.DENY){
                     ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
                     event.setCancelled(true);
                     return;
@@ -46,7 +47,6 @@ public class PlayerListener implements Listener {
                 double total = EventUtils.calculateContainerWorth(event);
 
                 if (total > 0) {
-                    //TODO: Change to component for lores
                     if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.instance.sound) {
 
                         assert event.getInteractionPoint() != null;
@@ -60,17 +60,30 @@ public class PlayerListener implements Listener {
         }
     }
 
-    //FIXME: Check if it works as intended
+    //FIXME: Check if it works as intended - not sure if a Event.setCancelled is needed for each
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
-    public void onSellstickUseNew(PlayerInteractEvent event) {
+    public void onSellstickUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
+        ItemStack sellStick = player.getInventory().getItemInMainHand();
+
         // Check if clicked block is chest, barrel or shulker
-        if (!EventUtils.didClickContainerWithSellStick(event)) return;
+        if (!EventUtils.didClickSellStickBlock(event.getClickedBlock())) return;
+
+        // Check if Item Matches UUID NBT of SellStick
+        if (!ItemUtils.matchSellStickUUID(sellStick)) return;
+
+        // Check if Item Matches Material of SellStick
+        if(!ItemUtils.matchSellstickMaterial(sellStick)) {
+            // Replace the item if it is an outdated item
+            player.getInventory().removeItem(sellStick);
+            CommandUtils.giveSellStick(player, ItemUtils.getUses(sellStick));
+            return;
+        }
 
         // Check if another plugin is cancelling the event
-        if(event.useInteractedBlock() == Event.Result.DENY){
+        if (event.useInteractedBlock() == Event.Result.DENY){
             ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
             event.setCancelled(true);
             return;
@@ -81,8 +94,6 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
-        ItemStack sellStick = player.getInventory().getItemInMainHand();
 
         int uses = ItemUtils.getUses(sellStick);
         double total = EventUtils.calculateContainerWorth(event);
