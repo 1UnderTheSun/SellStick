@@ -146,6 +146,5 @@ public class EventUtils {
         }
 
         return success;
-
     }
 }

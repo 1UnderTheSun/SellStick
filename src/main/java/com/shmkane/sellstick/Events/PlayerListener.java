@@ -20,6 +20,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
     public void onSellstickUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        //TODO: Reduce Nested Ifs
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // Check if clicked block is chest, barrel or shulker
             if (EventUtils.didClickContainerWithSellStick(event)) {

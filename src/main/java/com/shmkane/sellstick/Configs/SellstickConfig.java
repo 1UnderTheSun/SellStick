@@ -68,8 +68,7 @@ public class SellstickConfig {
             config.set("ItemType", "STICK");
             config.get("Glow", true);
 
-            List<String> lore = Arrays.asList("&c&lLeft&c click on a chest to sell items inside!",
-                    "&cSellStick by &oshmkane");
+            List<String> lore = Arrays.asList("&c&lLeft&c click on a chest to sell items inside!", "&cSellStick by &oshmkane");
             config.set("StickLore", lore);
             config.set("FiniteLore", "&c%remaining% &fremaining uses");
             config.set("InfiniteLore", "&4Infinite &cuses!");
