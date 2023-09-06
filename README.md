@@ -1,7 +1,7 @@
 # Sellstick
 #### SellStick is a Minecraft plugin that allows customisable selling of chest, shulker and barrel contents
 
-Sellstick is a fork of the popular Spigot plugin created by [(shmkane)](https://github.com/shmkane/SellStick/)
+Sellstick is a fork of the popular Spigot plugin created by [shmkane](https://github.com/shmkane/SellStick/)
 
 ## Features
 
