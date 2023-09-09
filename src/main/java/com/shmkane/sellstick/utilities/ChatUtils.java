@@ -16,7 +16,7 @@ public class ChatUtils {
 
     // Send Messages
     public static void sendMsg(CommandSender sender, String string, boolean showPrefix) {
-        Component msg = MiniMessage.miniMessage().deserialize((showPrefix)?SellstickConfig.instance.prefix.concat(string):string);
+        Component msg = MiniMessage.miniMessage().deserialize((showPrefix)?SellstickConfig.prefix.concat(string):string);
          if (sender instanceof ConsoleCommandSender) log(Level.INFO, string);
          else if (sender instanceof Player) sender.sendMessage(msg);
     }
@@ -32,6 +32,6 @@ public class ChatUtils {
 
     // Server Logger
     public static void log(Level level, String string) {
-        SellStick.plugin.getLogger().log(level, string);
+        SellStick.getInstance().getLogger().log(level, string);
     }
 }

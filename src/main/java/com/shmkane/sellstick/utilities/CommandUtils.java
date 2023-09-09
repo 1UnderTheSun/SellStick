@@ -13,24 +13,20 @@ public class CommandUtils {
     public static void giveSellStick(Player target, int uses) {
 
         // TODO: Do Items stack if they have a random NBT? If they don't stack, lets get rid of this random string shit
-        // This assigns a random string to the item meta so that the item cannot be stacked
-        RandomString random = new RandomString(5);
-
-        String UUID = random.nextString();
 
         ItemStack itemStack;
 
         try {
-            itemStack = new ItemStack(SellstickConfig.instance.material);
-        } catch (NullPointerException ex) {
-            ChatUtils.log(Level.SEVERE, "[%s] - Invalid item set in config. Please read the links I put in the config to fix this.");
+            itemStack = new ItemStack(SellstickConfig.material);
+        } catch (Exception ex) {
+            ChatUtils.log(Level.SEVERE, SellstickConfig.prefix + " - Invalid item set in config. Please read the links I put in the config to fix this.");
             return;
         }
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Set display name
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.instance.displayName + UUID));
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName));
 
         // Set NBT, uses and lore
         ItemUtils.setSellStick(itemStack);
@@ -38,7 +34,7 @@ public class CommandUtils {
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS); //Maybe add after item should be glowable?
 
         // Add glow if required
-        if (SellstickConfig.instance.glow) {
+        if (SellstickConfig.glow) {
             ItemUtils.glow(itemStack);
         }
 

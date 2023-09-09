@@ -54,10 +54,10 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         // Reload Command
         if (subCommand.equals("reload") && sender.hasPermission("sellstick.reload")) {
             try {
-                SellStick.plugin.reload();
+                SellStick.getInstance().reload();
                 return true;
             } catch (Exception ex) {
-                ChatUtils.sendMsg(sender, "&cSomething went wrong! Check console for error", true);
+                ChatUtils.sendMsg(sender, "<red>Something went wrong! Check console for error", true);
                 ChatUtils.log(Level.SEVERE, ex.getMessage());
                 return false;
             }
@@ -67,13 +67,13 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         else if (subCommand.equals("give") && sender.hasPermission("sellstick.give")) {
 
             if (args.length < 4) {
-                ChatUtils.sendMsg(sender, "&cNot enough arguments!", true);
+                ChatUtils.sendMsg(sender, "<red>Not enough arguments!", true);
                 return false;
             }
 
             Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
             if (target == null) {
-                ChatUtils.sendMsg(sender, "&cPlayer not found", true);
+                ChatUtils.sendMsg(sender, "<red>Player not found", true);
                 return false;
             }
 
@@ -82,23 +82,21 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             try {
                 numSticks = Integer.parseInt(args[2]);
             } catch (NumberFormatException ex) {
-                ChatUtils.sendMsg(sender, "&cNot a number: " + args[2], true);
+                ChatUtils.sendMsg(sender, "<red>Not a number: " + args[2], true);
                 return false;
             }
 
             // Check if the stick is infinite
             String argUses = args[3].toLowerCase();
             int uses;
-            boolean isInfinite = false;
 
             if (argUses.equals("i") || argUses.equals("infinite")) {
                 uses = Integer.MAX_VALUE;
-                isInfinite = true;
             } else { // Parse the argument is a number
                 try {
                     uses = Integer.parseInt(args[3]);
                 } catch (NumberFormatException ex) {
-                    ChatUtils.sendMsg(sender, "&cMust be a number or 'i': " + args[3], true);
+                    ChatUtils.sendMsg(sender, "<red>Must be a number or 'i': ", true);
                     return false;
                 }
             }
@@ -109,15 +107,12 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 CommandUtils.giveSellStick(target, uses);
             }
 
-            ChatUtils.sendMsg(target, SellstickConfig.instance.receiveMessage.replace("%amount%",
-                    Integer.parseInt(args[2]) + ""), true);
-
-            ChatUtils.sendMsg(sender, SellstickConfig.instance.giveMessage.replace("%player%", target.getName())
-                    .replace("%amount%", Integer.parseInt(args[2]) + ""), true);
+            ChatUtils.sendMsg(target, SellstickConfig.receiveMessage.replace("%amount%", numSticks + ""), true);
+            ChatUtils.sendMsg(sender, SellstickConfig.giveMessage.replace("%player%", target.getName()).replace("%amount%", numSticks + ""), true);
 
             return true;
         } else {
-            ChatUtils.sendMsg(sender, SellstickConfig.instance.noPerm, true);
+            ChatUtils.sendMsg(sender, SellstickConfig.noPerm, true);
         }
         return false;
     }

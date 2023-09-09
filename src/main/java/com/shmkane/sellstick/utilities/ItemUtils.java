@@ -1,8 +1,8 @@
 package com.shmkane.sellstick.utilities;
 
 import com.shmkane.sellstick.configs.SellstickConfig;
-import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.enchantments.Enchantment;
@@ -65,8 +65,7 @@ public class ItemUtils {
         itemStack = NBT.itemStackFromNBT(nbtItemStack);
 
         // Update Uses on Lore
-        itemStack.lore().set(itemStack.lore().size() - 1, MiniMessage.miniMessage().deserialize(
-                SellstickConfig.instance.finiteLore.replace("%remaining%", String.valueOf(newUses))));
+        itemStack.getItemMeta().lore(setLoreList(newUses));
     }
 
     public static void setSellStick(ItemStack itemStack) {
@@ -78,7 +77,7 @@ public class ItemUtils {
     @Deprecated
     public static boolean isSellStick(ItemStack itemStack) {
         boolean matchUUID = matchSellStickUUID(itemStack);
-        boolean matchMaterial = matchSellstickMaterial(itemStack);
+        boolean matchMaterial = matchSellStickMaterial(itemStack);
 
         return (matchUUID && matchMaterial);
     }
@@ -88,16 +87,20 @@ public class ItemUtils {
         return nbtItemStack.getUUID("SellStick").toString().equals("c5faa888-4b14-11ee-be56-0242ac120002");
     }
 
-    public static boolean matchSellstickMaterial(ItemStack itemStack) {
-        return itemStack.getType().equals(SellstickConfig.instance.material);
+    public static boolean matchSellStickMaterial(ItemStack itemStack) {
+        return itemStack.getType().equals(SellstickConfig.material);
     }
 
     public static List<Component> setLoreList(int uses){
         List<Component> loreList = new ArrayList<>();
-        for(String loreLine : SellstickConfig.instance.lore) {
+        for(String loreLine : SellstickConfig.lore) {
             loreList.add(MiniMessage.miniMessage().deserialize(loreLine));
         }
-        loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.instance.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        if(uses == Integer.MAX_VALUE){
+            loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.infiniteLore));
+        } else {
+            loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        }
         return loreList;
     }
 
