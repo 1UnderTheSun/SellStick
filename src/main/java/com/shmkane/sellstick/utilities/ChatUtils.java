@@ -32,6 +32,6 @@ public class ChatUtils {
 
     // Server Logger
     public static void log(Level level, String string) {
-        SellStick.plugin.getLogger().log(level, string);
+        SellStick.getInstance().getLogger().log(level, string);
     }
 }

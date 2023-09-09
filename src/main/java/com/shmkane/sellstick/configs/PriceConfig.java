@@ -13,8 +13,6 @@ public class PriceConfig extends Config {
 
     @Override
     void loadValues(FileConfiguration config) {
-        super.loadValues(config);
-
         config.set("prices.SULPHUR", 1.02);
         config.set("prices.RED_ROSE", 0.76);
         config.set("prices.LEATHER", 2.13);

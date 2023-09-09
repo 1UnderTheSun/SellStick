@@ -20,11 +20,11 @@ import java.util.logging.Level;
 public class SellStick extends JavaPlugin {
 
     private static Economy econ = null;
-    public static SellStick plugin;
     public boolean ShopGUIEnabled, EssentialsEnabled = false;
 
     SellstickConfig sellstickConfig;
     PriceConfig priceConfig;
+    static SellStick plugin;
 
     /*
      * Initial plugin setup. Creation and loading of YML files.
@@ -37,17 +37,17 @@ public class SellStick extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-
+        plugin = this;
         // Don't load plugin if Vault is not present
         if (!setupEconomy()) {
             ChatUtils.log(Level.SEVERE,"[%s] - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        //TODO: Initialise Configurations
+
         saveDefaultConfig();
         //Load Variables, Listeners and Commands
-        loadInterface();
+        loadVariables();
         loadClasses();
     }
 
@@ -56,14 +56,13 @@ public class SellStick extends JavaPlugin {
         // Update config file
         reloadConfig();
         // Check soft dependencies and update interface
-        loadInterface();
+        loadVariables();
         // Update config vars
         sellstickConfig.setup(getDataFolder());
         priceConfig.setup(getDataFolder());
     }
 
-    // Check soft dependencies and update interface
-    public void loadInterface() {
+    public void loadVariables() {
         // Check Soft Dependencies
         ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
         EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
@@ -103,7 +102,7 @@ public class SellStick extends JavaPlugin {
     }
 
     public static SellStick getInstance() {
-        return SellStick.plugin;
+        return plugin;
     }
 
 }

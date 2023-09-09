@@ -22,7 +22,7 @@ public class CommandUtils {
 
         try {
             itemStack = new ItemStack(SellstickConfig.material);
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
             ChatUtils.log(Level.SEVERE, "[%s] - Invalid item set in config. Please read the links I put in the config to fix this.");
             return;
         }

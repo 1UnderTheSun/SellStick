@@ -54,7 +54,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         // Reload Command
         if (subCommand.equals("reload") && sender.hasPermission("sellstick.reload")) {
             try {
-                SellStick.plugin.reload();
+                SellStick.getInstance().reload();
                 return true;
             } catch (Exception ex) {
                 ChatUtils.sendMsg(sender, "&cSomething went wrong! Check console for error", true);

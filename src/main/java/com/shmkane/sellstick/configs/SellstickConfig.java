@@ -23,20 +23,15 @@ public class SellstickConfig extends Config {
         super(configName, dataFolder);
     }
 
-    // Setup Main Configuration
-    public void setup(File dir) {
-        super.setup(dir);
-        setPriceSource(PriceInterface);
-    }
-
     // Load configuration values
+    @Override
     void loadValues(FileConfiguration config) {
         // Price Interface Configuration
-        PriceInterface = tryGetString(conf,"PriceInterface", "PricesYML");
+        PriceInterface = tryGetString(conf,"PriceSource", "PricesYML");
 
         // Item Configuration
         displayName = tryGetString(conf,"Item.DisplayName", "&cSellStick");
-        material = Material.getMaterial(tryGetString(conf, "Item.Material".toUpperCase(), "STICK"));
+        material = tryGetMaterial(conf, "Item.Material".toUpperCase(), Material.STICK);
         lore = config.getStringList("Item.StickLore");
         finiteLore = tryGetString(conf,"Item.FiniteLore", "&c%remaining% &fremaining uses");
         infiniteLore = tryGetString(conf,"Item.InfiniteLore", "&4Infinite &cuses!");
@@ -52,6 +47,8 @@ public class SellstickConfig extends Config {
         nonSellingRelated = tryGetString(conf,"Messages.NonSellingRelated", "&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)");
         receiveMessage = tryGetString(conf,"Messages.ReceiveMessage", "&aYou gave &e%player% &e&l%amount% &aSellSticks!" );
         giveMessage = tryGetString(conf,"Messages.GiveMessage", "&aYou''ve received &e&l%amount% &asell sticks!");
+
+        setPriceSource(PriceInterface);
     }
 
 
@@ -60,11 +57,13 @@ public class SellstickConfig extends Config {
     }
 
     public void setPriceSource(String priceString) {
-        if(priceString.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled)
-            priceSource = PriceSource.SHOPGUI;
-        if(priceString.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled)
-            priceSource = PriceSource.ESSWORTH;
-        ChatUtils.log(Level.WARNING, "PriceInterface did not match any option. Defaulting to prices.yml.");
+        if (priceString != null) {
+            if (priceString.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled)
+                priceSource = PriceSource.SHOPGUI;
+            if (priceString.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled)
+                priceSource = PriceSource.ESSWORTH;
+        }
+        ChatUtils.log(Level.WARNING, "PriceSource did not match any option. Defaulting to prices.yml.");
         priceSource = PriceSource.PRICESYML;
     }
 

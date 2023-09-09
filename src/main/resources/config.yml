@@ -1,6 +1,6 @@
 # Choose between three different price interfaces, selects default if incorrect spelling/null
 # PricesYML (Default), ShopGUI, Essentials
-PriceInterface: 'PricesYML'
+PriceSource: 'PricesYML'
 
 Item:
   DisplayName: '&cSellStick'
@@ -11,6 +11,7 @@ Item:
     - '&a&lRight click &con a chest to sell items inside!'
   Glow: true
   # Dependent on if item is infinite
+  #   Use \n for new lines
   FiniteLore: '&c%remaining% &fremaining uses'
   InfiniteLore: '&4Infinite &cuses!'
   UseSound: true
@@ -20,8 +21,8 @@ Messages:
 
   # When they sell the items what message should be displayed
   # Placeholders:
-  #   Use %price% for how much they gained
-  #   Use %balance% to show new balance
+  #   %price% - for how much they gained
+  #   %balance% - to show new balance
   SellMessage: '&cYou sold items for &f%price% &cand now have &f%balance%'
 
   # No Permission Message
@@ -37,12 +38,12 @@ Messages:
   BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
 
   # Unrelated Action
-  NonSellingRelated: '&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)'
+  NonSellingRelated: '&cRight click a chest!'
 
   # The message to send to the Admin who gave the sticks
   # Placeholders:
-  #   %player - person who will get the sellstick
-  #   %amount - amount of SellSticks that %player% will receive
+  #   %player% - person who will get the sellstick
+  #   %amount% - amount of SellSticks that %player% will receive
   GiveMessage: '&aYou gave &e%player% &e&l%amount% &aSellSticks!'
 
   # Message to send to the player who received the sticks
