@@ -5,6 +5,7 @@ import com.shmkane.sellstick.configs.PriceConfig;
 import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.SellStick;
 import net.brcdev.shopgui.ShopGuiPlusApi;
+import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
@@ -111,44 +112,28 @@ public class EventUtils {
         }
 
         double multiplier = setMultiplier(player);
+        Economy econ = SellStick.getInstance().getEcon();
 
-        EconomyResponse r;
+        EconomyResponse response = econ.depositPlayer(player, total * multiplier);
 
-        if (multiplier != 1) {
-            r = SellStick.getInstance().getEcon().depositPlayer(player, total * multiplier);
+        if (!response.transactionSuccess()) {
+            ChatUtils.sendMsg(player, String.format("An error occurred: %s", response.errorMessage), true);
+            return false;
         }
 
-        r = SellStick.getInstance().getEcon().depositPlayer(player, total);
+        String[] send = SellstickConfig.sellMessage.split("\\\\n");
 
-        boolean success = false;
-
-        if (r.transactionSuccess()) {
-            success = true;
-            //FIXME: What the fuck in god's name
-            if (SellstickConfig.sellMessage.contains("\\n")) {
-                String[] send = SellstickConfig.sellMessage.split("\\\\n");
-                for (String msg : send) {
-                    ChatUtils.sendMsg(player, msg.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance)).replace("%price%",
-                            SellStick.getInstance().getEcon().format(r.amount)),true);
-                }
-            }
-            else {
-                ChatUtils.sendMsg(player, SellstickConfig.sellMessage.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance))
-                        .replace("%price%", SellStick.getInstance().getEcon().format(r.amount)), true);
-            }
-
-            ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + r.amount + " and now has " + r.balance);
+        for (String msg : send) {
+            ChatUtils.sendMsg(player, msg.replace("%balance%", econ.format(response.balance)).replace("%price%", econ.format(response.amount)),true);
         }
-        else {
-            ChatUtils.sendMsg(player, String.format("An error occurred: %s", r.errorMessage), true);
-        }
+        ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + response.amount + " and now has " + response.balance);
 
-        if (uses - 1 == 0) {
+        if (uses <= 0) {
             player.getInventory().remove(player.getInventory().getItemInMainHand());
             ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
         }
 
-        return success;
+        return true;
     }
 
     static double setMultiplier(Player player) {
