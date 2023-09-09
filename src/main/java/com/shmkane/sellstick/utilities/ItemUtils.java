@@ -65,8 +65,7 @@ public class ItemUtils {
         itemStack = NBT.itemStackFromNBT(nbtItemStack);
 
         // Update Uses on Lore
-        itemStack.lore().set(itemStack.lore().size() - 1, MiniMessage.miniMessage().deserialize(
-                SellstickConfig.instance.finiteLore.replace("%remaining%", String.valueOf(newUses))));
+        itemStack.getItemMeta().lore(setLoreList(newUses));
     }
 
     public static void setSellStick(ItemStack itemStack) {
@@ -78,7 +77,7 @@ public class ItemUtils {
     @Deprecated
     public static boolean isSellStick(ItemStack itemStack) {
         boolean matchUUID = matchSellStickUUID(itemStack);
-        boolean matchMaterial = matchSellstickMaterial(itemStack);
+        boolean matchMaterial = matchSellStickMaterial(itemStack);
 
         return (matchUUID && matchMaterial);
     }
@@ -88,16 +87,16 @@ public class ItemUtils {
         return nbtItemStack.getUUID("SellStick").toString().equals("c5faa888-4b14-11ee-be56-0242ac120002");
     }
 
-    public static boolean matchSellstickMaterial(ItemStack itemStack) {
-        return itemStack.getType().equals(SellstickConfig.instance.material);
+    public static boolean matchSellStickMaterial(ItemStack itemStack) {
+        return itemStack.getType().equals(SellstickConfig.material);
     }
 
     public static List<Component> setLoreList(int uses){
         List<Component> loreList = new ArrayList<>();
-        for(String loreLine : SellstickConfig.instance.lore) {
+        for(String loreLine : SellstickConfig.lore) {
             loreList.add(MiniMessage.miniMessage().deserialize(loreLine));
         }
-        loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.instance.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.finiteLore.replace("%remaining%", String.valueOf(uses))));
         return loreList;
     }
 

@@ -23,6 +23,9 @@ public class SellStick extends JavaPlugin {
     public static SellStick plugin;
     public boolean ShopGUIEnabled, EssentialsEnabled = false;
 
+    SellstickConfig sellstickConfig;
+    PriceConfig priceConfig;
+
     /*
      * Initial plugin setup. Creation and loading of YML files.
      * <p>
@@ -55,8 +58,8 @@ public class SellStick extends JavaPlugin {
         // Check soft dependencies and update interface
         loadInterface();
         // Update config vars
-        SellstickConfig.instance.setup(getDataFolder());
-        PriceConfig.instance.setup(getDataFolder());
+        sellstickConfig.setup(getDataFolder());
+        priceConfig.setup(getDataFolder());
     }
 
     // Check soft dependencies and update interface
@@ -64,9 +67,6 @@ public class SellStick extends JavaPlugin {
         // Check Soft Dependencies
         ShopGUIEnabled = Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus");
         EssentialsEnabled = Bukkit.getPluginManager().isPluginEnabled("Essentials");
-
-        // Set the price interface the plugin will be using
-        SellstickConfig.instance.setSellInterface(SellstickConfig.instance.PriceInterface);
     }
 
     public void loadClasses() {
@@ -74,6 +74,9 @@ public class SellStick extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         // Register Commands
         getCommand("sellstick").setExecutor(new SellStickCommand());
+        // Create config classes
+        sellstickConfig = new SellstickConfig("config", getDataFolder());
+        priceConfig = new PriceConfig("prices", getDataFolder());
 
     }
 

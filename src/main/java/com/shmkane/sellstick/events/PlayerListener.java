@@ -28,14 +28,14 @@ public class PlayerListener implements Listener {
 
                 // Check if another plugin is cancelling the event
                 if (event.useInteractedBlock() == Event.Result.DENY){
-                    ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
+                    ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
                     event.setCancelled(true);
                     return;
                 }
 
                 // Checks if Player has the permission to use a SellStick
                 if (!player.hasPermission("sellstick.use")) {
-                    ChatUtils.sendMsg(player, SellstickConfig.instance.noPerm, true);
+                    ChatUtils.sendMsg(player, SellstickConfig.noPerm, true);
                     event.setCancelled(true);
                     return;
                 }
@@ -47,13 +47,13 @@ public class PlayerListener implements Listener {
                 double total = EventUtils.calculateContainerWorth(event);
 
                 if (total > 0) {
-                    if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.instance.sound) {
+                    if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.sound) {
 
                         assert event.getInteractionPoint() != null;
                         player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
                     }
                 } else {
-                    ChatUtils.sendMsg(player, SellstickConfig.instance.nothingWorth, true);
+                    ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
                 }
                 event.setCancelled(true);
             }
@@ -75,7 +75,7 @@ public class PlayerListener implements Listener {
         if (!ItemUtils.matchSellStickUUID(sellStick)) return;
 
         // Check if Item Matches Material of SellStick
-        if(!ItemUtils.matchSellstickMaterial(sellStick)) {
+        if(!ItemUtils.matchSellStickMaterial(sellStick)) {
             // Replace the item if it is an outdated item
             player.getInventory().removeItem(sellStick);
             CommandUtils.giveSellStick(player, ItemUtils.getUses(sellStick));
@@ -84,13 +84,13 @@ public class PlayerListener implements Listener {
 
         // Check if another plugin is cancelling the event
         if (event.useInteractedBlock() == Event.Result.DENY){
-            ChatUtils.sendMsg(player, SellstickConfig.instance.territoryMessage, true);
+            ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
             event.setCancelled(true);
             return;
         }
         // Checks if Player has the permission to use a SellStick
         if (!player.hasPermission("sellstick.use")) {
-            ChatUtils.sendMsg(player, SellstickConfig.instance.noPerm, true);
+            ChatUtils.sendMsg(player, SellstickConfig.noPerm, true);
             event.setCancelled(true);
             return;
         }
@@ -99,13 +99,13 @@ public class PlayerListener implements Listener {
         double total = EventUtils.calculateContainerWorth(event);
 
         if (total > 0) {
-            if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.instance.sound) {
+            if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.sound) {
 
                 assert event.getInteractionPoint() != null;
                 player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
             }
         } else {
-            ChatUtils.sendMsg(player, SellstickConfig.instance.nothingWorth, true);
+            ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
         }
         event.setCancelled(true);
     }

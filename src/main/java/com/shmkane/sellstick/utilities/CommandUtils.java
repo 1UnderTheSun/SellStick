@@ -21,7 +21,7 @@ public class CommandUtils {
         ItemStack itemStack;
 
         try {
-            itemStack = new ItemStack(SellstickConfig.instance.material);
+            itemStack = new ItemStack(SellstickConfig.material);
         } catch (NullPointerException ex) {
             ChatUtils.log(Level.SEVERE, "[%s] - Invalid item set in config. Please read the links I put in the config to fix this.");
             return;
@@ -30,7 +30,7 @@ public class CommandUtils {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Set display name
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.instance.displayName + UUID));
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName + UUID));
 
         // Set NBT, uses and lore
         ItemUtils.setSellStick(itemStack);
@@ -38,7 +38,7 @@ public class CommandUtils {
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS); //Maybe add after item should be glowable?
 
         // Add glow if required
-        if (SellstickConfig.instance.glow) {
+        if (SellstickConfig.glow) {
             ItemUtils.glow(itemStack);
         }
 

@@ -30,16 +30,16 @@ public class EventUtils {
 
         double total = 0;
 
-        SellstickConfig.SellingInterface sellInterface = SellstickConfig.instance.getSellInterface();
+        SellstickConfig.PriceSource priceSource = SellstickConfig.getPriceSource();
 
         for (ItemStack itemstack : containerContents) {
             // Reset each variable on each itemstack
             double price = 0;
             double slotPrice;
 
-            switch (sellInterface) {
+            switch (priceSource) {
                 case PRICESYML:
-                    ConfigurationSection pricesSection = PriceConfig.instance.getConfig().getConfigurationSection("prices");
+                    ConfigurationSection pricesSection = PriceConfig.getConfig().getConfigurationSection("prices");
 
                     // Initialize a map to store prices
                     assert pricesSection != null;
@@ -73,7 +73,7 @@ public class EventUtils {
             int amount = itemstack.getAmount();
 
             // ShopGUI already implements amount within the API
-            if(sellInterface == SellstickConfig.SellingInterface.SHOPGUI) {
+            if(priceSource == SellstickConfig.PriceSource.SHOPGUI) {
                 amount = 1;
             }
 
@@ -125,15 +125,15 @@ public class EventUtils {
         if (r.transactionSuccess()) {
             success = true;
             //FIXME: What the fuck in god's name
-            if (SellstickConfig.instance.sellMessage.contains("\\n")) {
-                String[] send = SellstickConfig.instance.sellMessage.split("\\\\n");
+            if (SellstickConfig.sellMessage.contains("\\n")) {
+                String[] send = SellstickConfig.sellMessage.split("\\\\n");
                 for (String msg : send) {
                     ChatUtils.sendMsg(player, msg.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance)).replace("%price%",
                             SellStick.getInstance().getEcon().format(r.amount)),true);
                 }
             }
             else {
-                ChatUtils.sendMsg(player, SellstickConfig.instance.sellMessage.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance))
+                ChatUtils.sendMsg(player, SellstickConfig.sellMessage.replace("%balance%", SellStick.getInstance().getEcon().format(r.balance))
                         .replace("%price%", SellStick.getInstance().getEcon().format(r.amount)), true);
             }
 
@@ -145,7 +145,7 @@ public class EventUtils {
 
         if (uses - 1 == 0) {
             player.getInventory().remove(player.getInventory().getItemInMainHand());
-            ChatUtils.sendMsg(player, SellstickConfig.instance.brokenStick, true);
+            ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
         }
 
         return success;

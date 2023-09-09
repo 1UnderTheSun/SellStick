@@ -89,11 +89,9 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             // Check if the stick is infinite
             String argUses = args[3].toLowerCase();
             int uses;
-            boolean isInfinite = false;
 
             if (argUses.equals("i") || argUses.equals("infinite")) {
                 uses = Integer.MAX_VALUE;
-                isInfinite = true;
             } else { // Parse the argument is a number
                 try {
                     uses = Integer.parseInt(args[3]);
@@ -109,15 +107,12 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 CommandUtils.giveSellStick(target, uses);
             }
 
-            ChatUtils.sendMsg(target, SellstickConfig.instance.receiveMessage.replace("%amount%",
-                    Integer.parseInt(args[2]) + ""), true);
-
-            ChatUtils.sendMsg(sender, SellstickConfig.instance.giveMessage.replace("%player%", target.getName())
-                    .replace("%amount%", Integer.parseInt(args[2]) + ""), true);
+            ChatUtils.sendMsg(target, SellstickConfig.receiveMessage.replace("%amount%", numSticks + ""), true);
+            ChatUtils.sendMsg(sender, SellstickConfig.giveMessage.replace("%player%", target.getName()).replace("%amount%", numSticks + ""), true);
 
             return true;
         } else {
-            ChatUtils.sendMsg(sender, SellstickConfig.instance.noPerm, true);
+            ChatUtils.sendMsg(sender, SellstickConfig.noPerm, true);
         }
         return false;
     }
