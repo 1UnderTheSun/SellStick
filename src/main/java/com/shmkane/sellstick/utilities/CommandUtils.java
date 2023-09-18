@@ -19,14 +19,14 @@ public class CommandUtils {
         try {
             itemStack = new ItemStack(SellstickConfig.material);
         } catch (Exception ex) {
-            ChatUtils.log(Level.SEVERE, "[%s] - Invalid item set in config. Please read the links I put in the config to fix this.");
+            ChatUtils.log(Level.SEVERE, SellstickConfig.prefix + " - Invalid item set in config. Please read the links I put in the config to fix this.");
             return;
         }
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Set display name
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName + UUID));
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName));
 
         // Set NBT, uses and lore
         ItemUtils.setSellStick(itemStack);
