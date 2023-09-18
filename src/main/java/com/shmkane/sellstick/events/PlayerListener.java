@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
+    /*
     @Deprecated
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
     public void onSellstickUseOld(PlayerInteractEvent event) {
@@ -59,6 +60,7 @@ public class PlayerListener implements Listener {
             }
         }
     }
+    */
 
     //FIXME: Check if it works as intended - not sure if a Event.setCancelled is needed for each
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event

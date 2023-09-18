@@ -117,7 +117,7 @@ public class EventUtils {
         EconomyResponse response = econ.depositPlayer(player, total * multiplier);
 
         if (!response.transactionSuccess()) {
-            ChatUtils.sendMsg(player, String.format("An error occurred: %s", response.errorMessage), true);
+            ChatUtils.sendMsg(player, String.format("An error occurred: " + SellstickConfig.prefix + "", response.errorMessage), true);
             return false;
         }
 

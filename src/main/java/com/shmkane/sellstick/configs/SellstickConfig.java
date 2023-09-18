@@ -30,23 +30,23 @@ public class SellstickConfig extends Config {
         PriceInterface = tryGetString(conf,"PriceSource", "PricesYML");
 
         // Item Configuration
-        displayName = tryGetString(conf,"Item.DisplayName", "&cSellStick");
-        material = tryGetMaterial(conf, "Item.Material".toUpperCase(), Material.STICK);
+        displayName = tryGetString(conf,"Item.DisplayName", "<gold>SellStick");
+        material = tryGetMaterial(conf, "Item.Material", Material.STICK);
         lore = config.getStringList("Item.StickLore");
-        finiteLore = tryGetString(conf,"Item.FiniteLore", "&c%remaining% &fremaining uses");
-        infiniteLore = tryGetString(conf,"Item.InfiniteLore", "&4Infinite &cuses!");
+        finiteLore = tryGetString(conf,"Item.FiniteLore", "<dark_red>%remaining% <red>remaining uses");
+        infiniteLore = tryGetString(conf,"Item.InfiniteLore", "<dark_red>Infinite <red>uses!");
         glow = config.getBoolean("Item.Glow", true);
         sound = config.getBoolean("Item.UseSound", true);
         // Messages
-        prefix = tryGetString(conf,"Messages.PluginPrefix", "&6[&eSellStick&6] ");
-        sellMessage = tryGetString(conf,"Messages.SellMessage", "&cYou sold items for &f%price% &cand now have &f%balance%");
-        noPerm = tryGetString(conf,"Messages.NoPermissionMessage", "&cSorry, you don''t have permission for this!");
-        territoryMessage = tryGetString(conf,"Messages.InvalidTerritoryMessage", "&cYou can''t use sell stick here!");
-        nothingWorth = tryGetString(conf,"Messages.NotWorthMessage", "&cNothing worth selling inside");
-        brokenStick = tryGetString(conf,"Messages.BrokenStick","&cYour sellstick broke!(Ran out of uses)");
-        nonSellingRelated = tryGetString(conf,"Messages.NonSellingRelated", "&cOak''s words echoed...&7There''s a time and place for everything but not now! (Right click a chest!)");
-        receiveMessage = tryGetString(conf,"Messages.ReceiveMessage", "&aYou gave &e%player% &e&l%amount% &aSellSticks!" );
-        giveMessage = tryGetString(conf,"Messages.GiveMessage", "&aYou''ve received &e&l%amount% &asell sticks!");
+        prefix = tryGetString(conf,"Messages.PluginPrefix", "<gold>[<yellow>SellStick<gold>] ");
+        sellMessage = tryGetString(conf,"Messages.SellMessage", "<red>You sold items for %price% and now have %balance%");
+        noPerm = tryGetString(conf,"Messages.NoPermissionMessage", "<red>Sorry, you don''t have permission for this!");
+        territoryMessage = tryGetString(conf,"Messages.InvalidTerritoryMessage", "<red>You can''t use sell stick here!");
+        nothingWorth = tryGetString(conf,"Messages.NotWorthMessage", "<red>Nothing worth selling inside");
+        brokenStick = tryGetString(conf,"Messages.BrokenStick","<red>Your sellstick broke!(Ran out of uses)");
+        nonSellingRelated = tryGetString(conf,"Messages.NonSellingRelated", "<red>Oak''s words echoed... There''s a time and place for everything but not now! (Right click a chest!)");
+        receiveMessage = tryGetString(conf,"Messages.ReceiveMessage", "<green>You gave %player% %amount% SellSticks!" );
+        giveMessage = tryGetString(conf,"Messages.GiveMessage", "<green>You''ve received %amount% SellSticks!");
 
         setPriceSource(PriceInterface);
     }
@@ -58,10 +58,17 @@ public class SellstickConfig extends Config {
 
     public void setPriceSource(String priceString) {
         if (priceString != null) {
-            if (priceString.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled)
+            if (priceString.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled) {
                 priceSource = PriceSource.SHOPGUI;
-            if (priceString.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled)
+                return;
+            }
+            if (priceString.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled) {
                 priceSource = PriceSource.ESSWORTH;
+                return;
+            }
+            if (priceString.equalsIgnoreCase("PriceYML"))
+                priceSource = PriceSource.PRICESYML;
+                return;
         }
         ChatUtils.log(Level.WARNING, "PriceSource did not match any option. Defaulting to prices.yml.");
         priceSource = PriceSource.PRICESYML;

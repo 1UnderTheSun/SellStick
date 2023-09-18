@@ -57,7 +57,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 SellStick.getInstance().reload();
                 return true;
             } catch (Exception ex) {
-                ChatUtils.sendMsg(sender, "&cSomething went wrong! Check console for error", true);
+                ChatUtils.sendMsg(sender, "<red>Something went wrong! Check console for error", true);
                 ChatUtils.log(Level.SEVERE, ex.getMessage());
                 return false;
             }
@@ -67,13 +67,13 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         else if (subCommand.equals("give") && sender.hasPermission("sellstick.give")) {
 
             if (args.length < 4) {
-                ChatUtils.sendMsg(sender, "&cNot enough arguments!", true);
+                ChatUtils.sendMsg(sender, "<red>Not enough arguments!", true);
                 return false;
             }
 
             Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
             if (target == null) {
-                ChatUtils.sendMsg(sender, "&cPlayer not found", true);
+                ChatUtils.sendMsg(sender, "<red>Player not found", true);
                 return false;
             }
 
@@ -82,7 +82,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             try {
                 numSticks = Integer.parseInt(args[2]);
             } catch (NumberFormatException ex) {
-                ChatUtils.sendMsg(sender, "&cNot a number: " + args[2], true);
+                ChatUtils.sendMsg(sender, "<red>Not a number: " + args[2], true);
                 return false;
             }
 
@@ -96,7 +96,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 try {
                     uses = Integer.parseInt(args[3]);
                 } catch (NumberFormatException ex) {
-                    ChatUtils.sendMsg(sender, "&cMust be a number or 'i': " + args[3], true);
+                    ChatUtils.sendMsg(sender, "<red>Must be a number or 'i': ", true);
                     return false;
                 }
             }

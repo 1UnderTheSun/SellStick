@@ -26,6 +26,7 @@
           </execution>
         </executions>
         <configuration>
+          <finalName>SellStick-Reloaded</finalName>
           <relocations>
             <relocation>
               <pattern>de.tr7zw.changeme.nbtapi</pattern>

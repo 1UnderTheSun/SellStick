@@ -40,7 +40,7 @@ public class SellStick extends JavaPlugin {
         plugin = this;
         // Don't load plugin if Vault is not present
         if (!setupEconomy()) {
-            ChatUtils.log(Level.SEVERE,"[%s] - Disabled due to no Vault dependency found!");
+            ChatUtils.log(Level.SEVERE,SellstickConfig.prefix + " - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

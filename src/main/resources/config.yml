@@ -3,53 +3,53 @@
 PriceSource: 'PricesYML'
 
 Item:
-  DisplayName: '&cSellStick'
+  DisplayName: '<gold>SellStick'
   # Set the Material of the SellStick
   # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for Materials
   Material: STICK
   StickLore:
-    - '&a&lRight click &con a chest to sell items inside!'
+    - '<green>Right click on a chest to sell items inside!'
   Glow: true
   # Dependent on if item is infinite
   #   Use \n for new lines
-  FiniteLore: '&c%remaining% &fremaining uses'
-  InfiniteLore: '&4Infinite &cuses!'
+  FiniteLore: '<red>%remaining% <red>remaining uses'
+  InfiniteLore: '<dark_red>Infinite <red>uses!'
   UseSound: true
 
 Messages:
-  PluginPrefix: '&6[&eSellStick&6] '
+  PluginPrefix: '<gold>[<yellow>SellStick<gold>] '
 
   # When they sell the items what message should be displayed
   # Placeholders:
   #   %price% - for how much they gained
   #   %balance% - to show new balance
-  SellMessage: '&cYou sold items for &f%price% &cand now have &f%balance%'
+  SellMessage: '<red>You sold items for %price% and now have %balance%'
 
   # No Permission Message
-  NoPermissionMessage: '&cSorry, you don''t have permission for this!'
+  NoPermissionMessage: '<red>Sorry, you don''t have permission for this!'
 
   # No Territory Access
-  InvalidTerritoryMessage: '&cYou can''t use sell stick here!'
+  InvalidTerritoryMessage: '<red>You can''t use sell stick here!'
 
   # Empty Chest
-  NotWorthMessage: '&cNothing worth selling inside'
+  NotWorthMessage: '<red>Nothing worth selling inside'
 
   # SellStick Break Message
-  BrokenStick: '&cYour sellstick broke!(Ran out of uses)'
+  BrokenStick: '<red>Your sellstick broke!(Ran out of uses)'
 
   # Unrelated Action
-  NonSellingRelated: '&cRight click a chest!'
+  NonSellingRelated: '<red>Right click a chest!'
 
   # The message to send to the Admin who gave the sticks
   # Placeholders:
   #   %player% - person who will get the sellstick
   #   %amount% - amount of SellSticks that %player% will receive
-  GiveMessage: '&aYou gave &e%player% &e&l%amount% &aSellSticks!'
+  GiveMessage: '<red>You gave %player% %amount% SellSticks!'
 
   # Message to send to the player who received the sticks
   # Placeholders:
   #   %amount% - money that the seller receives.
-  ReceiveMessage: '&aYou''ve received &e&l%amount% &asell sticks!'
+  ReceiveMessage: '<red>You''ve received %amount% SellSticks!'
 
 
 

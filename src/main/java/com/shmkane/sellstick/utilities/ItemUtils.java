@@ -96,7 +96,11 @@ public class ItemUtils {
         for(String loreLine : SellstickConfig.lore) {
             loreList.add(MiniMessage.miniMessage().deserialize(loreLine));
         }
-        loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        if(uses == Integer.MAX_VALUE){
+            loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.infiniteLore));
+        } else {
+            loreList.add(MiniMessage.miniMessage().deserialize(SellstickConfig.finiteLore.replace("%remaining%", String.valueOf(uses))));
+        }
         return loreList;
     }
 

@@ -13,10 +13,6 @@ public class CommandUtils {
     public static void giveSellStick(Player target, int uses) {
 
         // TODO: Do Items stack if they have a random NBT? If they don't stack, lets get rid of this random string shit
-        // This assigns a random string to the item meta so that the item cannot be stacked
-        RandomString random = new RandomString(5);
-
-        String UUID = random.nextString();
 
         ItemStack itemStack;
 
