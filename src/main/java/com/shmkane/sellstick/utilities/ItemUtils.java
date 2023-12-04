@@ -64,7 +64,7 @@ public class ItemUtils {
         NBTItem nbtItemStack = new NBTItem(itemStack);
         int newUses = getUses(itemStack) - 1;
         nbtItemStack.setInteger("UsesRemaining", newUses);
-        itemStack = NBTItem.convertNBTtoItem(nbtItemStack);
+        itemStack = nbtItemStack.getItem();
 
         // Update Uses on Lore
         itemStack.getItemMeta().lore(setLoreList(newUses));
