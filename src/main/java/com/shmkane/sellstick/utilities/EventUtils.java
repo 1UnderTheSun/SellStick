@@ -34,6 +34,9 @@ public class EventUtils {
         SellstickConfig.PriceSource priceSource = SellstickConfig.getPriceSource();
 
         for (ItemStack itemstack : containerContents) {
+
+            //Check if ItemStack is null
+            if (itemstack == null) continue;
             // Reset each variable on each itemstack
             double price = 0;
             double slotPrice;
@@ -49,7 +52,7 @@ public class EventUtils {
                     // Check Price of ItemStack
                     for (Map.Entry<String, Object> entry : prices.entrySet()) {
                         if(itemstack.getType().toString().equalsIgnoreCase(entry.getKey())) {
-                            price = Double.parseDouble((String) entry.getValue());
+                            price = Double.parseDouble(entry.getValue().toString());
                         }
                     }
 
@@ -100,8 +103,8 @@ public class EventUtils {
     }
 
     // Checks if clicked block is on a chest, barrel or shulker box
-    public static boolean didClickSellStickBlock(Block block) {
-        return (block instanceof Chest || block instanceof Barrel || block instanceof ShulkerBox);
+    public static boolean didClickSellStickBlock(Player player, Block block, PlayerInteractEvent event) {
+        return (block.getState() instanceof Chest || block.getState() instanceof Barrel || block.getState() instanceof ShulkerBox);
     }
 
     // Handles the SellStick in SaleEvent and PostSaleEvent - (Originally Made by MrGhetto)

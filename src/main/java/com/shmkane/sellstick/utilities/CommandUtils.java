@@ -28,9 +28,6 @@ public class CommandUtils {
         // Set display name
         itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName));
 
-        // Set NBT, uses and lore
-        ItemUtils.setSellStick(itemStack);
-        ItemUtils.setUses(itemStack, uses);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS); //Maybe add after item should be glowable?
 
         // Add glow if required
@@ -41,7 +38,12 @@ public class CommandUtils {
         // Apply meta to item stack
         itemStack.setItemMeta(itemMeta);
 
+
+        // Set NBT, uses and lore
+        itemStack = ItemUtils.setSellStick(itemStack);
+        ItemStack finalItem = ItemUtils.setUses(itemStack, uses);
+
         // Add to inventory
-        target.getInventory().addItem(itemStack);
+        target.getInventory().addItem(finalItem);
     }
 }

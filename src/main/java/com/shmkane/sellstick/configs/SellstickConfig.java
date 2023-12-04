@@ -35,8 +35,8 @@ public class SellstickConfig extends Config {
         lore = config.getStringList("Item.StickLore");
         finiteLore = tryGetString(conf,"Item.FiniteLore", "<dark_red>%remaining% <red>remaining uses");
         infiniteLore = tryGetString(conf,"Item.InfiniteLore", "<dark_red>Infinite <red>uses!");
-        glow = config.getBoolean("Item.Glow", true);
-        sound = config.getBoolean("Item.UseSound", true);
+        glow = Boolean.parseBoolean(tryGetString(conf, "Item.Glow", String.valueOf(true)));
+        sound = Boolean.parseBoolean(tryGetString(conf, "Item.UseSound", String.valueOf(true)));
         // Messages
         prefix = tryGetString(conf,"Messages.PluginPrefix", "<gold>[<yellow>SellStick<gold>] ");
         sellMessage = tryGetString(conf,"Messages.SellMessage", "<red>You sold items for %price% and now have %balance%");
@@ -48,7 +48,7 @@ public class SellstickConfig extends Config {
         receiveMessage = tryGetString(conf,"Messages.ReceiveMessage", "<green>You gave %player% %amount% SellSticks!" );
         giveMessage = tryGetString(conf,"Messages.GiveMessage", "<green>You''ve received %amount% SellSticks!");
 
-        setPriceSource(PriceInterface);
+        priceSource = setPriceSource(PriceInterface);
     }
 
 
@@ -56,22 +56,23 @@ public class SellstickConfig extends Config {
         return priceSource;
     }
 
-    public void setPriceSource(String priceString) {
+    private PriceSource setPriceSource(String priceString) {
         if (priceString != null) {
             if (priceString.equalsIgnoreCase("ShopGUI") && SellStick.getInstance().ShopGUIEnabled) {
-                priceSource = PriceSource.SHOPGUI;
-                return;
+                return PriceSource.SHOPGUI;
+
             }
             if (priceString.equalsIgnoreCase("Essentials") && SellStick.getInstance().EssentialsEnabled) {
-                priceSource = PriceSource.ESSWORTH;
-                return;
+                return PriceSource.ESSWORTH;
             }
-            if (priceString.equalsIgnoreCase("PriceYML"))
-                priceSource = PriceSource.PRICESYML;
-                return;
+            if (priceString.equalsIgnoreCase("PricesYML")) {
+                return PriceSource.PRICESYML;
+            }
+        } else {
+            ChatUtils.log(Level.WARNING, "PriceSource did not match any option. Defaulting to prices.yml.");
+            return PriceSource.PRICESYML;
         }
-        ChatUtils.log(Level.WARNING, "PriceSource did not match any option. Defaulting to prices.yml.");
-        priceSource = PriceSource.PRICESYML;
+        return PriceSource.PRICESYML;
     }
 
     public enum PriceSource {
