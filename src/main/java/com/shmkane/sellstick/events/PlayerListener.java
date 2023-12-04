@@ -18,51 +18,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
-    /*
-    @Deprecated
-    @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
-    public void onSellstickUseOld(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            // Check if clicked block is chest, barrel or shulker
-            if (EventUtils.didClickContainerWithSellStick(event)) {
-
-                // Check if another plugin is cancelling the event
-                if (event.useInteractedBlock() == Event.Result.DENY){
-                    ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
-                    event.setCancelled(true);
-                    return;
-                }
-
-                // Checks if Player has the permission to use a SellStick
-                if (!player.hasPermission("sellstick.use")) {
-                    ChatUtils.sendMsg(player, SellstickConfig.noPerm, true);
-                    event.setCancelled(true);
-                    return;
-                }
-
-                ItemStack sellStick = player.getInventory().getItemInMainHand();
-
-                int uses = ItemUtils.getUses(sellStick);
-
-                double total = EventUtils.calculateContainerWorth(event);
-
-                if (total > 0) {
-                    if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.sound) {
-
-                        assert event.getInteractionPoint() != null;
-                        player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
-                    }
-                } else {
-                    ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
-                }
-                event.setCancelled(true);
-            }
-        }
-    }
-    */
-
     //FIXME: Check if it works as intended - not sure if a Event.setCancelled is needed for each
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
     public void onSellstickUse(PlayerInteractEvent event) {

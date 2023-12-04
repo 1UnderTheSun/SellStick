@@ -37,6 +37,8 @@ public class EventUtils {
 
             //Check if ItemStack is null
             if (itemstack == null) continue;
+
+            if (itemstack.getItemMeta().hasDisplayName()) continue;
             // Reset each variable on each itemstack
             double price = 0;
             double slotPrice;
