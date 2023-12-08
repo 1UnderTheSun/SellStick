@@ -7,6 +7,7 @@ import com.shmkane.sellstick.SellStick;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -17,6 +18,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -35,10 +38,11 @@ public class EventUtils {
 
         for (ItemStack itemstack : containerContents) {
 
-            //Check if ItemStack is null
+            // Check if ItemStack is null
             if (itemstack == null) continue;
 
             if (itemstack.getItemMeta().hasDisplayName()) continue;
+
             // Reset each variable on each itemstack
             double price = 0;
             double slotPrice;
@@ -53,7 +57,7 @@ public class EventUtils {
 
                     // Check Price of ItemStack
                     for (Map.Entry<String, Object> entry : prices.entrySet()) {
-                        if(itemstack.getType().toString().equalsIgnoreCase(entry.getKey())) {
+                        if (itemstack.getType().toString().equalsIgnoreCase(entry.getKey())) {
                             price = Double.parseDouble(entry.getValue().toString());
                         }
                     }
@@ -71,7 +75,16 @@ public class EventUtils {
                     IEssentials ess = (IEssentials) SellStick.getInstance().getServer().getPluginManager().getPlugin("Essentials");
 
                     assert ess != null;
-                    price = ess.getWorth().getPrice(ess, itemstack).doubleValue();
+                    BigDecimal essPrice = ess.getWorth().getPrice(ess, itemstack);
+
+                    // Check for null before getting double value
+                    if (essPrice != null) {
+                        price = essPrice.doubleValue();
+                    } else {
+                        // Handle the case where the price is null (log an error, throw an exception, etc.)
+                        // For now, setting price to 0 if it's null
+                        price = 0;
+                    }
 
                     break;
             }
@@ -79,19 +92,20 @@ public class EventUtils {
             int amount = itemstack.getAmount();
 
             // ShopGUI already implements amount within the API
-            if(priceSource == SellstickConfig.PriceSource.SHOPGUI) {
+            if (priceSource == SellstickConfig.PriceSource.SHOPGUI) {
                 amount = 1;
             }
 
             slotPrice = price * amount;
 
-            if(slotPrice > 0) {
+            if (slotPrice > 0) {
                 container.getInventory().remove(itemstack);
             }
             total += slotPrice;
         }
         return total;
     }
+
 
     // Checks if clicked block is on a chest, barrel or Shulker Box with a SellStick
     @Deprecated
@@ -105,16 +119,17 @@ public class EventUtils {
     }
 
     // Checks if clicked block is on a chest, barrel or shulker box
-    public static boolean didClickSellStickBlock(Player player, Block block, PlayerInteractEvent event) {
+    public static boolean didClickSellStickBlock(Block block) {
         return (block.getState() instanceof Chest || block.getState() instanceof Barrel || block.getState() instanceof ShulkerBox);
     }
 
     // Handles the SellStick in SaleEvent and PostSaleEvent - (Originally Made by MrGhetto)
-    public static boolean saleEvent(Player player, ItemStack sellStick, int uses, double total) {
+    public static boolean saleEvent(Player player, ItemStack sellStick, double total) {
 
         if (!ItemUtils.isInfinite(sellStick)) {
-            ItemUtils.subtractUses(sellStick);
+            sellStick = ItemUtils.subtractUses(sellStick);
         }
+        player.getInventory().setItemInMainHand(sellStick);
 
         double multiplier = setMultiplier(player);
         Economy econ = SellStick.getInstance().getEcon();
@@ -122,7 +137,7 @@ public class EventUtils {
         EconomyResponse response = econ.depositPlayer(player, total * multiplier);
 
         if (!response.transactionSuccess()) {
-            ChatUtils.sendMsg(player, String.format("An error occurred: " + SellstickConfig.prefix + "", response.errorMessage), true);
+            ChatUtils.sendMsg(player, String.format("An error occurred: " + SellstickConfig.prefix, response.errorMessage), true);
             return false;
         }
 
@@ -133,8 +148,8 @@ public class EventUtils {
         }
         ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + response.amount + " and now has " + response.balance);
 
-        if (uses <= 0) {
-            player.getInventory().remove(player.getInventory().getItemInMainHand());
+        if (ItemUtils.getUses(sellStick) <= 0) {
+            player.getInventory().removeItem(sellStick);
             ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
         }
 

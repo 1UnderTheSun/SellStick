@@ -3,6 +3,7 @@ package com.shmkane.sellstick;
 import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.utilities.ChatUtils;
 import com.shmkane.sellstick.utilities.CommandUtils;
+import com.shmkane.sellstick.utilities.ConvertUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,9 +21,14 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
         List<String> commands = new ArrayList<>();
 
         if (args.length == 1) {
-            commands.add("give");
+            if (sender.hasPermission("sellstick.give")) {
+                commands.add("give");
+            }
             if (sender.hasPermission("sellstick.reload")) {
                 commands.add("reload");
+            }
+            if (sender.hasPermission("sellstick.convert")) {
+                commands.add("convert");
             }
         } else if (args.length == 2) {
             for(Player player : SellStick.getInstance().getServer().getOnlinePlayers()){
@@ -61,6 +67,15 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
                 ChatUtils.log(Level.SEVERE, ex.getMessage());
                 return false;
             }
+        }
+
+        if (subCommand.equals("convert") && sender.hasPermission("sellstick.convert")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("Only players can use this command.");
+                return false;
+            }
+            ConvertUtils.convertSellStick((Player) sender);
+            return true;
         }
 
         // Give Command

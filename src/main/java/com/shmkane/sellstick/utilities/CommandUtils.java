@@ -3,7 +3,6 @@ package com.shmkane.sellstick.utilities;
 import com.shmkane.sellstick.configs.SellstickConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import java.util.logging.Level;
@@ -11,8 +10,6 @@ import java.util.logging.Level;
 public class CommandUtils {
 
     public static void giveSellStick(Player target, int uses) {
-
-        // TODO: Do Items stack if they have a random NBT? If they don't stack, lets get rid of this random string shit
 
         ItemStack itemStack;
 
@@ -28,15 +25,13 @@ public class CommandUtils {
         // Set display name
         itemMeta.displayName(MiniMessage.miniMessage().deserialize(SellstickConfig.displayName));
 
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS); //Maybe add after item should be glowable?
+        // Apply meta to item stack
+        itemStack.setItemMeta(itemMeta);
 
         // Add glow if required
         if (SellstickConfig.glow) {
             ItemUtils.glow(itemStack);
         }
-
-        // Apply meta to item stack
-        itemStack.setItemMeta(itemMeta);
 
 
         // Set NBT, uses and lore

@@ -23,14 +23,17 @@ public class PlayerListener implements Listener {
     public void onSellstickUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack sellStick = player.getInventory().getItemInMainHand();
+
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
+
+        if (event.getPlayer().isSneaking()) return;
 
         if (sellStick.getType().isAir() || sellStick.getAmount() == 0) return;
         Block block = event.getClickedBlock();
         // Check if Item Matches UUID NBT of SellStick
         if (!ItemUtils.matchSellStickUUID(sellStick)) return;
         // Check if clicked block is chest, barrel or shulker
-        if (!EventUtils.didClickSellStickBlock(player, block, event)) return;
+        if (!EventUtils.didClickSellStickBlock(block)) return;
         // Check if Item Matches Material of SellStick
         if(!ItemUtils.matchSellStickMaterial(sellStick)) {
             // Replace the item if it is an outdated item
@@ -40,25 +43,22 @@ public class PlayerListener implements Listener {
         }
 
         // Check if another plugin is cancelling the event
-        if (event.useInteractedBlock() == Event.Result.DENY){
-            System.out.println(6);
+        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY){
             ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
             event.setCancelled(true);
             return;
         }
         // Checks if Player has the permission to use a SellStick
         if (!player.hasPermission("sellstick.use")) {
-            System.out.println(7);
             ChatUtils.sendMsg(player, SellstickConfig.noPerm, true);
             event.setCancelled(true);
             return;
         }
 
-        int uses = ItemUtils.getUses(sellStick);
         double total = EventUtils.calculateContainerWorth(event);
 
         if (total > 0) {
-            if (EventUtils.saleEvent(player, sellStick, uses, total) && SellstickConfig.sound) {
+            if (EventUtils.saleEvent(player, sellStick, total) && SellstickConfig.sound) {
 
                 assert event.getInteractionPoint() != null;
                 player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);

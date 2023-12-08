@@ -8,6 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,12 @@ public class ItemUtils {
     private static final UUID uuid = UUID.fromString("c5faa888-4b14-11ee-be56-0242ac120002");
 
     // Make an ItemStack Glow
-    public static void glow(ItemStack itemStack) {
+    public static ItemStack glow(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemStack.setItemMeta(itemMeta);
         itemStack.addUnsafeEnchantment(Enchantment.OXYGEN, 1);
-        itemStack.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        return itemStack;
     }
 
     // Check if an ItemStack is infinite
@@ -30,10 +34,11 @@ public class ItemUtils {
     }
 
     // Set an Itemstack with a NBT Tag of Infinite with a state
-    public static void setInfinite(ItemStack itemStack) {
+    public static NBTItem setInfinite(ItemStack itemStack) {
         NBTItem nbtItemStack = new NBTItem(itemStack);
         nbtItemStack.setBoolean("Infinite", true);
         nbtItemStack.setInteger("UsesRemaining", Integer.MAX_VALUE);
+        return nbtItemStack;
     }
 
     // Get uses Remaining from a SellStick
@@ -54,25 +59,31 @@ public class ItemUtils {
         NBTItem nbtItemStack = new NBTItem(itemStack);
         nbtItemStack.setInteger("UsesRemaining", uses);
         nbtItemStack.setBoolean("Infinite", false);
-        if (uses == Integer.MAX_VALUE) setInfinite(itemStack);
+        if (uses == Integer.MAX_VALUE) nbtItemStack = setInfinite(itemStack);
 
         return nbtItemStack.getItem();
     }
 
     // Subtract a use from a SellStick
-    public static void subtractUses(ItemStack itemStack) {
+    public static ItemStack subtractUses(ItemStack itemStack) {
         NBTItem nbtItemStack = new NBTItem(itemStack);
         int newUses = getUses(itemStack) - 1;
         nbtItemStack.setInteger("UsesRemaining", newUses);
         itemStack = nbtItemStack.getItem();
 
         // Update Uses on Lore
-        itemStack.getItemMeta().lore(setLoreList(newUses));
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.lore(setLoreList(newUses));
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+
     }
 
     public static ItemStack setSellStick(ItemStack itemStack) {
         NBTItem nbtItemStack = new NBTItem(itemStack);
         nbtItemStack.setString("SellStickUUID", uuid.toString());
+        nbtItemStack.setString("RandomSSUUID", UUID.randomUUID().toString()); // Make it non stackable
         return nbtItemStack.getItem();
     }
 
