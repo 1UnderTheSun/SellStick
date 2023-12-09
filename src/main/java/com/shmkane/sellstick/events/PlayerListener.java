@@ -1,10 +1,7 @@
 package com.shmkane.sellstick.events;
 
 import com.shmkane.sellstick.configs.SellstickConfig;
-import com.shmkane.sellstick.utilities.ChatUtils;
-import com.shmkane.sellstick.utilities.CommandUtils;
-import com.shmkane.sellstick.utilities.EventUtils;
-import com.shmkane.sellstick.utilities.ItemUtils;
+import com.shmkane.sellstick.utilities.*;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -26,6 +23,11 @@ public class PlayerListener implements Listener {
 
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
+        if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().startsWith("§e✦ §e§lSellStick")) {
+            ConvertUtils.convertSellStick(player);
+            return;
+        }
+
         if (event.getPlayer().isSneaking()) return;
 
         if (sellStick.getType().isAir() || sellStick.getAmount() == 0) return;
@@ -43,7 +45,7 @@ public class PlayerListener implements Listener {
         }
 
         // Check if another plugin is cancelling the event
-        if (event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY){
+        if (event.useInteractedBlock() == Event.Result.DENY){
             ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
             event.setCancelled(true);
             return;

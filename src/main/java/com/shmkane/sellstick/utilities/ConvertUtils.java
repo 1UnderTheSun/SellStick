@@ -52,6 +52,7 @@ public class ConvertUtils {
                 // Now 'uses' contains the extracted number from the lore line
                 CommandUtils.giveSellStick(player, uses);
                 player.getInventory().removeItem(sellstick);
+                ChatUtils.sendMsg(player, "<green>Replaced old Sellstick!", true);
             } catch (NumberFormatException e) {
                 ChatUtils.sendMsg(player, "Unable to parse the number from the lore line.", true);
             }

@@ -1,15 +1,15 @@
 name: SellStick
 main: com.shmkane.sellstick.SellStick
-version: 1.0.0-SNAPSHOT
+version: "${project.version}"
 api-version: 1.20
-author: shmkane, FlippinDuckMan
+author: shmkane, TreemanKing
 website: https://github.com/shmkane/SellStick
 depend: [Vault]
 softdepend: [Essentials, ShopGuiPlus]
 
 commands:
   sellstick:
-    description: Sell all items in a chest easily!
+    description: Sell all items in a chest, barrel or shulker box easily!
 
 permissions:
   sellstick.reload:
@@ -21,4 +21,7 @@ permissions:
   sellstick.give:
     default: op
     description: Give sellstick to players
+  sellstick.convert:
+    default: op
+    description: Allows players to convert their old sellsticks into new ones
 
