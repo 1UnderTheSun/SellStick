@@ -1,8 +1,10 @@
 package com.shmkane.sellstick.utilities;
 
+import com.shmkane.sellstick.SellStick;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -50,8 +52,12 @@ public class ConvertUtils {
             try {
                 int uses = Integer.parseInt(matcher.group());
                 // Now 'uses' contains the extracted number from the lore line
-                CommandUtils.giveSellStick(player, uses);
                 player.getInventory().removeItem(sellstick);
+                Bukkit.getServer().getScheduler().runTaskLater(SellStick.getInstance(), () -> {
+                    // Your code to be executed after 5 seconds goes here
+                    // For example, you can send a delayed message to the player
+                    CommandUtils.giveSellStick(player, uses);
+                }, 10L);
                 ChatUtils.sendMsg(player, "<green>Replaced old Sellstick!", true);
             } catch (NumberFormatException e) {
                 ChatUtils.sendMsg(player, "Unable to parse the number from the lore line.", true);
