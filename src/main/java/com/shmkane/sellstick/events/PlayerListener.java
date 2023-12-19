@@ -23,6 +23,8 @@ public class PlayerListener implements Listener {
 
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
+        if (sellStick.getItemMeta() == null) return;
+
         if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().startsWith("§e✦ §e§lSellStick")) {
             ConvertUtils.convertSellStick(player);
             return;
