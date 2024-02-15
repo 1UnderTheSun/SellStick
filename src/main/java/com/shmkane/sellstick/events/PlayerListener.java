@@ -13,6 +13,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class PlayerListener implements Listener {
 
     //FIXME: Check if it works as intended - not sure if a Event.setCancelled is needed for each
@@ -25,7 +27,8 @@ public class PlayerListener implements Listener {
 
         if (sellStick.getItemMeta() == null) return;
 
-        if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().startsWith("§e✦ §e§lSellStick")) {
+        String name = Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().displayName()).toString();
+        if (name.equals("§e✦ §e§lSellStick") || name.equals("§e§lSellStick")) {
             ConvertUtils.convertSellStick(player);
             return;
         }

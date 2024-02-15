@@ -20,7 +20,8 @@ public class ConvertUtils {
         }
 
         ItemStack sellstick = player.getInventory().getItemInMainHand();
-        if (!sellstick.getItemMeta().getDisplayName().startsWith("§e✦ §e§lSellStick")) {
+        String name = sellstick.getItemMeta().displayName().toString();
+        if (!name.equals("§e✦ §e§lSellStick") && !name.equals("§e§lSellStick")) {
             ChatUtils.sendMsg(player, "<red>This is not an old SellStick! ", true);
             Bukkit.getLogger().info(sellstick.getItemMeta().getDisplayName());
             return;
