@@ -27,8 +27,8 @@ public class PlayerListener implements Listener {
 
         if (sellStick.getItemMeta() == null) return;
 
-        String name = Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().displayName()).toString();
-        if (name.equals("§e✦ §e§lSellStick") || name.equals("§e§lSellStick")) {
+        String name = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+        if (name.startsWith("§e✦ §e§lSellStick") || name.startsWith("§6§lSellStick")) {
             ConvertUtils.convertSellStick(player);
             return;
         }
