@@ -26,7 +26,7 @@ public class SellStick extends JavaPlugin {
     PriceConfig priceConfig;
     static SellStick plugin;
 
-    /*
+    /**
      * Initial plugin setup. Creation and loading of YML files.
      * <p>
      * Creates / Loads Config.yml

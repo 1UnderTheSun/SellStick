@@ -4,8 +4,8 @@ version: "${project.version}"
 api-version: 1.20
 author: shmkane, TreemanKing
 website: https://github.com/shmkane/SellStick
-depend: [Vault]
-softdepend: [Essentials, ShopGuiPlus]
+depend: [Essentials, Vault]
+softdepend: [ShopGuiPlus]
 
 commands:
   sellstick:
