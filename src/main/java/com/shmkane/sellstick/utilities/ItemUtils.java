@@ -73,6 +73,10 @@ public class ItemUtils {
     // Subtract a use from a SellStick
     public static ItemStack subtractUses(ItemStack itemStack) {
 
+        // Skip if infinite
+        if (isInfinite(itemStack)) return itemStack;
+
+        // Subtract use
         int newUses = getUses(itemStack) - 1;
         NBT.modify(itemStack, nbt -> {
             nbt.setInteger("UsesRemaining", newUses);
