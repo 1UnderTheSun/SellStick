@@ -18,7 +18,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -150,7 +157,11 @@ public class EventUtils {
                     .replace("%balance%", econ.format(response.balance))
                     .replace("%price%", econ.format(response.amount)),true);
         }
-        ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + response.amount + " and now has " + response.balance);
+
+        // Build log message
+        String coords = Math.round(player.getLocation().x()) + " " + Math.round(player.getLocation().y()) + " " + Math.round(player.getLocation().z());
+        String usesLeft = (uses == Integer.MAX_VALUE) ? "i" : String.valueOf(uses);
+        writeLog(player.getName() + " sold $" + Math.round(response.amount) + " ( $" + Math.round(response.balance) + " ) at " + coords + " ( " + player.getWorld().getName() + " ) | " + usesLeft);
 
         if (uses <= 0) {
             player.getInventory().removeItem(sellStick);
@@ -177,5 +188,30 @@ public class EventUtils {
             }
         }
         return multiplier;
+    }
+
+    static void writeLog(String message) {
+        try {
+            File logFolder = new File(SellStick.getInstance().getDataFolder() + File.separator + "logs");
+            if (!logFolder.exists()) {
+                logFolder.mkdir();
+            }
+
+            Date calender = Calendar.getInstance().getTime();
+            String date = new SimpleDateFormat("dd-MM-yy").format(calender);
+            String time = new SimpleDateFormat("HH:mm:ss").format(calender);
+
+            File saveTo = new File(logFolder,date + ".log");
+            if (!saveTo.exists()) saveTo.createNewFile();
+
+            FileWriter fw = new FileWriter(saveTo, true);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.println(time + " | " + message);
+            pw.close();
+
+        } catch (IOException e) {
+            ChatUtils.log(Level.SEVERE, e.toString());
+            e.printStackTrace();
+        }
     }
 }
