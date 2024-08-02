@@ -13,72 +13,76 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public class PlayerListener implements Listener {
 
-    //FIXME: Check if it works as intended - not sure if a Event.setCancelled is needed for each
     @EventHandler(priority = EventPriority.MONITOR) // Checks if other plugins are using the event
     public void onSellstickUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
         ItemStack sellStick = player.getInventory().getItemInMainHand();
 
-        if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
+        if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;   // Must right-click
+        if (sellStick.getItemMeta() == null) return;                    // Return if empty item
 
-        if (sellStick.getItemMeta() == null) return;
-
+        // Convert old sellticks
         String name = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
         if (name.startsWith("§e✦ §e§lSellStick") || name.startsWith("§6§lSellStick")) {
             ConvertUtils.convertSellStick(player);
             return;
         }
 
-        if (event.getPlayer().isSneaking()) return;
+        if (event.getPlayer().isSneaking()) return;             // Check Player is not sneaking
+        if (sellStick.getType().isAir()) return;                // Check if Item is air
+        if (!ItemUtils.matchSellStickUUID(sellStick)) return;   // Check if Item has UUID of SellStick
+        if (!EventUtils.didClickSellStickBlock(block)) return;  // Check if clicked block is a container
 
-        if (sellStick.getType().isAir()) return;
-        Block block = event.getClickedBlock();
-        // Check if Item Matches UUID NBT of SellStick
-        if (!ItemUtils.matchSellStickUUID(sellStick)) return;
-        // Check if clicked block is chest, barrel or shulker
-        if (!EventUtils.didClickSellStickBlock(block)) return;
-
-        // Check if Item Matches Material of SellStick
-        if(!ItemUtils.matchSellStickMaterial(sellStick)) {
-            // Replace the item if it is an outdated item
-            player.getInventory().removeItem(sellStick);
-            CommandUtils.giveSellStick(player, ItemUtils.getUses(sellStick));
-            return;
-        }
-        // Check if player is only holding 1 stick
-        if (sellStick.getAmount() != 1) {
-            ChatUtils.sendMsg(player, SellstickConfig.holdOneMessage, true);
-            event.setCancelled(true);
-            return;
-        }
         // Check if another plugin is cancelling the event
         if (event.useInteractedBlock() == Event.Result.DENY){
             ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);
-            event.setCancelled(true);
+            return;
+        }
+
+        event.setCancelled(true); // Cancel opening the chest - confirmed player is using a sellstick
+
+        // Check sellstick material
+        if (!ItemUtils.matchSellStickMaterial(sellStick)) {
+            // Replace the item if the material does not match
+            player.getInventory().removeItem(sellStick);
+            CommandUtils.giveSellStick(player, ItemUtils.getUses(sellStick));
             return;
         }
         // Checks if Player has the permission to use a SellStick
         if (!player.hasPermission("sellstick.use")) {
             ChatUtils.sendMsg(player, SellstickConfig.noPerm, true);
+            return;
+        }
+        // Check if player is only holding 1 stick
+        if (sellStick.getAmount() != 1) {
+            ChatUtils.sendMsg(player, SellstickConfig.holdOneMessage, true);
+            return;
+        }
+
+        // Get total value of container
+        double total = EventUtils.calculateContainerWorth(event);
+
+        // Nothing worth selling
+        if (total <= 0) {
+            ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
             event.setCancelled(true);
             return;
         }
 
-        double total = EventUtils.calculateContainerWorth(event);
-
-        if (total > 0) {
-            if (EventUtils.saleEvent(player, sellStick, total) && SellstickConfig.sound) {
-
-                assert event.getInteractionPoint() != null;
-                player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
-            }
-        } else {
+        // Sell the items
+        if (!EventUtils.saleEvent(player, sellStick, total)) {
             ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
+            event.setCancelled(true);
+            return;
         }
-        event.setCancelled(true);
+
+        // Play sound
+        if (SellstickConfig.sound) {
+            assert event.getInteractionPoint() != null;
+            player.playSound(event.getInteractionPoint(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.5f);
+        }
     }
 }
