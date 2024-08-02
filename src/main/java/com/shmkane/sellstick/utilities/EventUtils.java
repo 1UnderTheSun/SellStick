@@ -161,7 +161,7 @@ public class EventUtils {
         // Build log message
         String coords = Math.round(player.getLocation().x()) + " " + Math.round(player.getLocation().y()) + " " + Math.round(player.getLocation().z());
         String usesLeft = (uses == Integer.MAX_VALUE) ? "i" : String.valueOf(uses);
-        writeLog(player.getName() + " sold $" + Math.round(response.amount) + " ( $" + Math.round(response.balance) + " ) at " + coords + " ( " + player.getWorld().getName() + " ) | " + usesLeft);
+        writeLog(player.getName() + " ( " + player.getUniqueId() + " ) sold $" + Math.round(response.amount) + " ( $" + Math.round(response.balance) + " ) at " + coords + " ( " + player.getWorld().getName() + " ) | " + usesLeft);
 
         if (uses <= 0) {
             player.getInventory().removeItem(sellStick);
@@ -192,18 +192,20 @@ public class EventUtils {
 
     static void writeLog(String message) {
         try {
-            File logFolder = new File(SellStick.getInstance().getDataFolder() + File.separator + "logs");
-            if (!logFolder.exists()) {
-                logFolder.mkdir();
-            }
-
+            // Get date + time
             Date calender = Calendar.getInstance().getTime();
             String date = new SimpleDateFormat("dd-MM-yy").format(calender);
             String time = new SimpleDateFormat("HH:mm:ss").format(calender);
 
+            // Get / create log folder
+            File logFolder = new File(SellStick.getInstance().getDataFolder() + File.separator + "logs");
+            if (!logFolder.exists()) logFolder.mkdir();
+
+            // Get / create log file
             File saveTo = new File(logFolder,date + ".log");
             if (!saveTo.exists()) saveTo.createNewFile();
 
+            // Write log to file
             FileWriter fw = new FileWriter(saveTo, true);
             PrintWriter pw = new PrintWriter(fw);
             pw.println(time + " | " + message);
