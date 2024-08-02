@@ -1,7 +1,11 @@
 package com.shmkane.sellstick.utilities;
 
 import com.shmkane.sellstick.configs.SellstickConfig;
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.nbtapi.iface.ReadableNBT;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.enchantments.Enchantment;
@@ -28,21 +32,26 @@ public class ItemUtils {
 
     // Check if an ItemStack is infinite
     public static boolean isInfinite(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
+
+        ReadableNBT nbtItemStack = NBT.readNbt(itemStack);
+
         return nbtItemStack.getBoolean("Infinite");
     }
 
     // Set an Itemstack with a NBT Tag of Infinite with a state
-    public static NBTItem setInfinite(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
+    public static ReadWriteNBT setInfinite(ItemStack itemStack) {
+
+        ReadWriteNBT nbtItemStack = NBT.itemStackToNBT(itemStack);
+
         nbtItemStack.setBoolean("Infinite", true);
         nbtItemStack.setInteger("UsesRemaining", Integer.MAX_VALUE);
+
         return nbtItemStack;
     }
 
     // Get uses Remaining from a SellStick
     public static int getUses(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
+        ReadableNBT nbtItemStack = NBT.readNbt(itemStack);
         return nbtItemStack.getInteger("UsesRemaining");
     }
 
@@ -55,23 +64,23 @@ public class ItemUtils {
         itemStack.setItemMeta(itemMeta);
 
         // NBT
-        NBTItem nbtItemStack = new NBTItem(itemStack);
-        nbtItemStack.setInteger("UsesRemaining", uses);
-        nbtItemStack.setBoolean("Infinite", false);
-        if (uses == Integer.MAX_VALUE) nbtItemStack = setInfinite(itemStack);
+        NBT.modify(itemStack, nbt -> {
+            nbt.setInteger("UsesRemaining", uses);
+            nbt.setBoolean("Infinite", false);
+        });
 
-        return nbtItemStack.getItem();
+        return itemStack;
     }
 
     // Subtract a use from a SellStick
     public static ItemStack subtractUses(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
+
         int newUses = getUses(itemStack) - 1;
-        nbtItemStack.setInteger("UsesRemaining", newUses);
-        itemStack = nbtItemStack.getItem();
+        NBT.modify(itemStack, nbt -> {
+            nbt.setInteger("UsesRemaining", newUses);
+        });
 
         // Update Uses on Lore
-
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.lore(setLoreList(newUses));
         itemStack.setItemMeta(itemMeta);
@@ -80,10 +89,13 @@ public class ItemUtils {
     }
 
     public static ItemStack setSellStick(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
-        nbtItemStack.setString("SellStickUUID", uuid.toString());
-        nbtItemStack.setString("RandomSSUUID", UUID.randomUUID().toString()); // Make it non stackable
-        return nbtItemStack.getItem();
+
+        NBT.modify(itemStack, nbt -> {
+            nbt.setString("SellStickUUID", uuid.toString());
+            nbt.setString("RandomSSUUID", UUID.randomUUID().toString()); // Make it non stackable
+        });
+
+        return itemStack;
     }
 
     @Deprecated
@@ -95,7 +107,7 @@ public class ItemUtils {
     }
 
     public static boolean matchSellStickUUID(ItemStack itemStack) {
-        NBTItem nbtItemStack = new NBTItem(itemStack);
+        ReadableNBT nbtItemStack = NBT.readNbt(itemStack);
         return nbtItemStack.getString("SellStickUUID").equals(uuid.toString());
     }
 
