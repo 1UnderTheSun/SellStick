@@ -130,6 +130,7 @@ public class EventUtils {
 
         double multiplier = setMultiplier(player);          // Get sell multiplier
         Economy econ = SellStick.getInstance().getEcon();   // Get economy
+        int uses = ItemUtils.getUses(sellStick);            // Get uses
 
         // Add funds to player
         EconomyResponse response = econ.depositPlayer(player, total * multiplier);
@@ -144,11 +145,14 @@ public class EventUtils {
         String[] send = SellstickConfig.sellMessage.split("\\\\n");
 
         for (String msg : send) {
-            ChatUtils.sendMsg(player, msg.replace("%balance%", econ.format(response.balance)).replace("%price%", econ.format(response.amount)),true);
+            ChatUtils.sendMsg(player, msg
+                    .replace("%uses%", String.valueOf(uses))
+                    .replace("%balance%", econ.format(response.balance))
+                    .replace("%price%", econ.format(response.amount)),true);
         }
         ChatUtils.log(Level.INFO,player.getName() + " sold items via SellStick for " + response.amount + " and now has " + response.balance);
 
-        if (ItemUtils.getUses(sellStick) <= 0) {
+        if (uses <= 0) {
             player.getInventory().removeItem(sellStick);
             ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
         }
