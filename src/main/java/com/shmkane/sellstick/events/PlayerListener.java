@@ -35,12 +35,13 @@ public class PlayerListener implements Listener {
 
         if (event.getPlayer().isSneaking()) return;
 
-        if (sellStick.getType().isAir() || sellStick.getAmount() == 0) return;
+        if (sellStick.getType().isAir()) return;
         Block block = event.getClickedBlock();
         // Check if Item Matches UUID NBT of SellStick
         if (!ItemUtils.matchSellStickUUID(sellStick)) return;
         // Check if clicked block is chest, barrel or shulker
         if (!EventUtils.didClickSellStickBlock(block)) return;
+
         // Check if Item Matches Material of SellStick
         if(!ItemUtils.matchSellStickMaterial(sellStick)) {
             // Replace the item if it is an outdated item
@@ -48,7 +49,12 @@ public class PlayerListener implements Listener {
             CommandUtils.giveSellStick(player, ItemUtils.getUses(sellStick));
             return;
         }
-
+        // Check if player is only holding 1 stick
+        if (sellStick.getAmount() != 1) {
+            ChatUtils.sendMsg(player, SellstickConfig.holdOneMessage, true);
+            event.setCancelled(true);
+            return;
+        }
         // Check if another plugin is cancelling the event
         if (event.useInteractedBlock() == Event.Result.DENY){
             ChatUtils.sendMsg(player, SellstickConfig.territoryMessage, true);

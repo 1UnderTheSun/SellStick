@@ -125,21 +125,22 @@ public class EventUtils {
     // Handles the SellStick in SaleEvent and PostSaleEvent - (Originally Made by MrGhetto)
     public static boolean saleEvent(Player player, ItemStack sellStick, double total) {
 
-        if (!ItemUtils.isInfinite(sellStick)) {
-            ItemUtils.subtractUses(sellStick);
-        }
-        player.getInventory().setItemInMainHand(sellStick);
+        // Subtract use
+        if (!ItemUtils.isInfinite(sellStick)) ItemUtils.subtractUses(sellStick);
 
-        double multiplier = setMultiplier(player);
-        Economy econ = SellStick.getInstance().getEcon();
+        double multiplier = setMultiplier(player);          // Get sell multiplier
+        Economy econ = SellStick.getInstance().getEcon();   // Get economy
 
+        // Add funds to player
         EconomyResponse response = econ.depositPlayer(player, total * multiplier);
 
+        // Catch error
         if (!response.transactionSuccess()) {
             ChatUtils.sendMsg(player, String.format("An error occurred: " + SellstickConfig.prefix, response.errorMessage), true);
             return false;
         }
 
+        // Send message to player
         String[] send = SellstickConfig.sellMessage.split("\\\\n");
 
         for (String msg : send) {

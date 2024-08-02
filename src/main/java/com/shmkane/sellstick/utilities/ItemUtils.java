@@ -90,7 +90,8 @@ public class ItemUtils {
 
         NBT.modify(itemStack, nbt -> {
             nbt.setString("SellStickUUID", uuid.toString());
-            nbt.setString("RandomSSUUID", UUID.randomUUID().toString()); // Make it non stackable
+            
+            //nbt.setString("RandomSSUUID", UUID.randomUUID().toString()); // Make it non stackable
         });
 
         return itemStack;
