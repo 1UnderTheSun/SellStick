@@ -31,6 +31,9 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        // Replace unstackable sellstick with stackable one
+        if (ConvertUtils.makeSellStickStackable(player, sellStick)) return;
+
         if (event.getPlayer().isSneaking()) return;             // Check Player is not sneaking
         if (sellStick.getType().isAir()) return;                // Check if Item is air
         if (!ItemUtils.matchSellStickUUID(sellStick)) return;   // Check if Item has UUID of SellStick

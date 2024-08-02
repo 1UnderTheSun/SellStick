@@ -1,19 +1,35 @@
 package com.shmkane.sellstick.utilities;
 
 import com.shmkane.sellstick.SellStick;
+import de.tr7zw.nbtapi.NBT;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConvertUtils {
+
+    public static boolean makeSellStickStackable(Player player, ItemStack sellStick) {
+        if (sellStick == null || sellStick.isEmpty()) return false;
+        if (!NBT.readNbt(sellStick).hasTag("RandomSSUUID")) return false;
+        if (!NBT.readNbt(sellStick).hasTag("UsesRemaining")) return false;
+        if (!NBT.readNbt(sellStick).hasTag("Infinite")) return false;
+
+        int uses = ItemUtils.getUses(sellStick);
+        int amount = sellStick.getAmount();
+
+        player.getInventory().removeItem(sellStick);
+        for (int i = 0; i < amount; i++) {
+            CommandUtils.giveSellStick(player, uses);
+        }
+        ChatUtils.sendMsg(player, "<green>Your sellstick has been replaced with a stackable version!", true);
+        return true;
+    }
 
     public static void convertSellStick (Player player) {
         if (player.getInventory().getItemInMainHand().isEmpty() || player.getInventory().getItemInMainHand().getType().isAir()) {
