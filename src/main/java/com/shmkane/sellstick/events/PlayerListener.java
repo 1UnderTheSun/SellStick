@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
         ItemStack sellStick = player.getInventory().getItemInMainHand();
 
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;   // Must right-click
-        if (sellStick.getItemMeta() == null) return;                    // Return if empty item
+        if (sellStick.getItemMeta() == null || block == null) return;                    // Return if empty item
 
         // Convert old sellticks
         String name = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
