@@ -161,7 +161,7 @@ public class EventUtils {
         // Build log message
         String coords = Math.round(player.getLocation().x()) + " " + Math.round(player.getLocation().y()) + " " + Math.round(player.getLocation().z());
         String usesLeft = (uses == Integer.MAX_VALUE) ? "i" : String.valueOf(uses);
-        writeLog(player.getName() + " ( " + player.getUniqueId() + " ) sold $" + Math.round(response.amount) + " ( $" + Math.round(response.balance) + " ) at " + coords + " ( " + player.getWorld().getName() + " ) | " + usesLeft);
+        writeLog(player.getName() + " (" + player.getUniqueId() + ") sold $" + Math.round(response.amount) + " ($" + Math.round(response.balance) + ") at " + coords + " in " + player.getWorld().getName() + " with " + usesLeft + " uses left");
 
         if (uses <= 0) {
             player.getInventory().removeItem(sellStick);
@@ -194,8 +194,8 @@ public class EventUtils {
         try {
             // Get date + time
             Date calender = Calendar.getInstance().getTime();
-            String date = new SimpleDateFormat("dd-MM-yy").format(calender);
-            String time = new SimpleDateFormat("HH:mm:ss").format(calender);
+            String time = new SimpleDateFormat("dd-MM-yy HH:mm:ss").format(calender);
+            String date = time.substring(0, 8);
 
             // Get / create log folder
             File logFolder = new File(SellStick.getInstance().getDataFolder() + File.separator + "logs");
