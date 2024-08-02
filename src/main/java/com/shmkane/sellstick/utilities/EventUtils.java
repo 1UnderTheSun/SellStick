@@ -7,7 +7,6 @@ import com.shmkane.sellstick.SellStick;
 import net.brcdev.shopgui.ShopGuiPlusApi;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -127,7 +126,7 @@ public class EventUtils {
     public static boolean saleEvent(Player player, ItemStack sellStick, double total) {
 
         if (!ItemUtils.isInfinite(sellStick)) {
-            sellStick = ItemUtils.subtractUses(sellStick);
+            ItemUtils.subtractUses(sellStick);
         }
         player.getInventory().setItemInMainHand(sellStick);
 

@@ -35,7 +35,7 @@ public class CommandUtils {
 
 
         // Set NBT, uses and lore
-        itemStack = ItemUtils.setSellStick(itemStack);
+        ItemUtils.setSellStick(itemStack);
         ItemStack finalItem = ItemUtils.setUses(itemStack, uses);
 
         // Add to inventory

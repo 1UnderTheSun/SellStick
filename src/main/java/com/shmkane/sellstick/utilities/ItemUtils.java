@@ -2,8 +2,6 @@ package com.shmkane.sellstick.utilities;
 
 import com.shmkane.sellstick.configs.SellstickConfig;
 import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import net.kyori.adventure.text.Component;
@@ -26,7 +24,7 @@ public class ItemUtils {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(itemMeta);
-        itemStack.addUnsafeEnchantment(Enchantment.OXYGEN, 1);
+        itemStack.addUnsafeEnchantment(Enchantment.FORTUNE, 1);
         return itemStack;
     }
 
@@ -66,7 +64,7 @@ public class ItemUtils {
         // NBT
         NBT.modify(itemStack, nbt -> {
             nbt.setInteger("UsesRemaining", uses);
-            nbt.setBoolean("Infinite", false);
+            nbt.setBoolean("Infinite", (uses == Integer.MAX_VALUE));
         });
 
         return itemStack;
