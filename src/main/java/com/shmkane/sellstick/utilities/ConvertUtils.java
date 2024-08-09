@@ -1,7 +1,8 @@
 package com.shmkane.sellstick.utilities;
 
 import com.shmkane.sellstick.SellStick;
-import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -16,9 +17,10 @@ public class ConvertUtils {
 
     public static boolean makeSellStickStackable(Player player, ItemStack sellStick) {
         if (sellStick == null || sellStick.isEmpty()) return false;
-        if (!NBT.readNbt(sellStick).hasTag("RandomSSUUID")) return false;
-        if (!NBT.readNbt(sellStick).hasTag("UsesRemaining")) return false;
-        if (!NBT.readNbt(sellStick).hasTag("Infinite")) return false;
+        ReadableNBT nbt = NBT.readNbt(sellStick);
+        if (!nbt.hasTag("RandomSSUUID")) return false;
+        if (!nbt.hasTag("UsesRemaining")) return false;
+        if (!nbt.hasTag("Infinite")) return false;
 
         int uses = ItemUtils.getUses(sellStick);
         int amount = sellStick.getAmount();
