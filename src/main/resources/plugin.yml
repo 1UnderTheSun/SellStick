@@ -24,4 +24,7 @@ permissions:
   sellstick.convert:
     default: op
     description: Allows players to convert their old sellsticks into new ones
+  sellstick.merge:
+    default: op
+    description: Allows players to merge all sellsticks in their inventory into one
 

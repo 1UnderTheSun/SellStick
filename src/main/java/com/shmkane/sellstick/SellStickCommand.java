@@ -4,17 +4,18 @@ import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.utilities.ChatUtils;
 import com.shmkane.sellstick.utilities.CommandUtils;
 import com.shmkane.sellstick.utilities.ConvertUtils;
+import com.shmkane.sellstick.utilities.MergeUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class SellStickCommand implements CommandExecutor, TabExecutor {
+public class SellStickCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
@@ -29,6 +30,9 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             }
             if (sender.hasPermission("sellstick.convert")) {
                 commands.add("convert");
+            }
+            if (sender.hasPermission("sellstick.merge")) {
+                commands.add("merge");
             }
         } else if (args.length == 2) {
             for(Player player : SellStick.getInstance().getServer().getOnlinePlayers()){
@@ -69,6 +73,7 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             }
         }
 
+        // Convert Command
         if (subCommand.equals("convert") && sender.hasPermission("sellstick.convert")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage("Only players can use this command.");
@@ -76,6 +81,16 @@ public class SellStickCommand implements CommandExecutor, TabExecutor {
             }
             ConvertUtils.convertSellStick((Player) sender);
             return true;
+        }
+
+        // Merge Command
+        if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
+            Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
+
+            ItemStack[] sellsticks = MergeUtils.searchInventory(target);
+            int usesSum = MergeUtils.sumSellStickUses(sellsticks);
+            MergeUtils.removeSellsticks(target, sellsticks);
+            CommandUtils.giveSellStick(target, usesSum);
         }
 
         // Give Command

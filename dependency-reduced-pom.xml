@@ -16,7 +16,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
         <configuration>
-          <outputDirectory>/data/BudgieNet/PAPER_21/plugins</outputDirectory>
+          <outputDirectory>/home/arn/dev/under/SellStick/target</outputDirectory>
         </configuration>
       </plugin>
       <plugin>

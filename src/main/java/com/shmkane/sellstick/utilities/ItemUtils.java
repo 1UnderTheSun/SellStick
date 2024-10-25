@@ -101,7 +101,6 @@ public class ItemUtils {
         return itemStack;
     }
 
-    @Deprecated
     public static boolean isSellStick(ItemStack itemStack) {
         boolean matchUUID = matchSellStickUUID(itemStack);
         boolean matchMaterial = matchSellStickMaterial(itemStack);

@@ -25,7 +25,7 @@ public class PlayerListener implements Listener {
         if (sellStick.getItemMeta() == null || block == null) return;                    // Return if empty item
 
         // Convert old sellticks
-        String name = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+        String name = player.getInventory().getItemInMainHand().getItemMeta().displayName().toString();
         if (name.startsWith("§e✦ §e§lSellStick") || name.startsWith("§6§lSellStick")) {
             ConvertUtils.convertSellStick(player);
             return;

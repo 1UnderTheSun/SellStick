@@ -20,7 +20,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
-                    <outputDirectory>/data/BudgieNet/PAPER_21/plugins</outputDirectory>
+                    <outputDirectory>/home/arn/dev/under/SellStick/target</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.13.1</version>
+            <version>2.13.2</version>
         </dependency>
     </dependencies>
 

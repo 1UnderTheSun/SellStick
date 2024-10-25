@@ -2,11 +2,9 @@ package com.shmkane.sellstick.configs;
 
 import com.google.errorprone.annotations.ForOverride;
 import com.shmkane.sellstick.utilities.ChatUtils;
-import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.logging.Level;
