@@ -85,11 +85,19 @@ public class SellStickCommand implements TabExecutor {
 
         // Merge Command
         if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
+            // Get player
             Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
 
+            // Get all sellsticks in player inventory
             ItemStack[] sellsticks = MergeUtils.searchInventory(target);
+
+            // Sum the uses of all sellsticks
             int usesSum = MergeUtils.sumSellStickUses(sellsticks);
+
+            // Remove all sellsticks from player inventory
             MergeUtils.removeSellsticks(target, sellsticks);
+
+            // Give a new sellstick with a number of uses equalling usesSum
             CommandUtils.giveSellStick(target, usesSum);
         }
 

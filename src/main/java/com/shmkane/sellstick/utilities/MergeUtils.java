@@ -9,19 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MergeUtils {
-    // Merging Sellsticks
-
     // Search through player inventory to get all sellsticks
     public static ItemStack[] searchInventory(Player player) {
+        // Get inventory
         Inventory inventory = player.getInventory();
+        // List to store all sellsticks
         List<ItemStack> sellsticks = new ArrayList<>();
 
+        // Search through inventory to find all sellsticks and store in sellsticks list
         for (ItemStack item : inventory.getContents()) {
-            if (item != null && ItemUtils.isSellStick(item)) {
+            if (item != null && ItemUtils.matchSellStickUUID(item)) {
                 sellsticks.add(item);
             }
         }
 
+        // Return sellsticks list as an array
         return sellsticks.toArray(new ItemStack[0]);
     }
 
@@ -29,6 +31,7 @@ public class MergeUtils {
     public static int sumSellStickUses(ItemStack[] sellsticks) {
         int usesSum = 0;
 
+        // Sum the uses of all sellsticks in sellsticks array
         for (ItemStack sellstick : sellsticks) {
             usesSum += ItemUtils.getUses(sellstick);
         }
@@ -38,8 +41,10 @@ public class MergeUtils {
 
     // Remove all sellsticks from player inventory
     public static void removeSellsticks(Player player, ItemStack[] sellsticks) {
+        // Get inventory
         Inventory inventory = player.getInventory();
 
+        // Remove all sellsticks from sellsticks array
         for (ItemStack sellstick : sellsticks) {
             inventory.remove(sellstick);
         }
