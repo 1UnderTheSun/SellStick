@@ -35,6 +35,7 @@ public class SellStick extends JavaPlugin {
      * Create instance of Essentials
      * Hook SellStickCommand executor
      */
+    
     @Override
     public void onEnable() {
         plugin = this;
@@ -46,6 +47,7 @@ public class SellStick extends JavaPlugin {
         }
 
         saveDefaultConfig();
+
         //Load Variables, Listeners and Commands
         loadVariables();
         loadClasses();
@@ -76,7 +78,6 @@ public class SellStick extends JavaPlugin {
         // Create config classes
         sellstickConfig = new SellstickConfig("config", getDataFolder());
         priceConfig = new PriceConfig("prices", getDataFolder());
-
     }
 
     @Override
@@ -105,4 +106,7 @@ public class SellStick extends JavaPlugin {
         return plugin;
     }
 
-}
+    public int getMaxAmount() {
+        return sellstickConfig.getMaxAmount();
+    }
+}   

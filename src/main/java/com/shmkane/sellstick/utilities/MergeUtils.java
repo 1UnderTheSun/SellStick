@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,32 +27,54 @@ public class MergeUtils {
         return sellsticks.toArray(new ItemStack[0]);
     }
 
+    // Sort sellsticks by their uses
+    public static ItemStack[] sortSellsticksByUses(ItemStack[] sellsticks) {
+        List<ItemStack> sortedSellsticks = new ArrayList<>(List.of(sellsticks));
+
+        sortedSellsticks.sort(Comparator.comparingInt(ItemUtils::getUses));
+
+        return sortedSellsticks.toArray(new ItemStack[0]);
+    }
+
     // Sum the uses of all sellsticks
-    public static int sumSellStickUses(ItemStack[] sellsticks) {
+    public static int sumSellStickUses(ItemStack[] sortedSellsticks, int maxAmount) {
         int usesSum = 0;
 
         // Sum the uses of all sellsticks in sellsticks array
-        for (ItemStack sellstick : sellsticks) {
-            usesSum += ItemUtils.getUses(sellstick);
+        for (ItemStack sellstick : sortedSellsticks) {
+            int uses = ItemUtils.getUses(sellstick);
+            if (usesSum + uses <= maxAmount) {
+                usesSum += uses;
+            } else {
+                break;
+            }
         }
 
         return usesSum;
     }
 
-    // Remove all sellsticks from player inventory
-    public static void removeSellsticks(Player player, ItemStack[] sellsticks) {
+    // Remove all sorted sellsticks from player inventory
+    public static void removeSortedSellsticks(Player player, ItemStack[] sortedSellsticks, int maxAmount) {
         // Get inventory
         Inventory inventory = player.getInventory();
+        int usesSum = 0;
 
-        // Remove all sellsticks from sellsticks array
-        for (ItemStack sellstick : sellsticks) {
-            inventory.remove(sellstick);
+        // Remove sellsticks which are less than maxAmount
+        for (ItemStack sellstick : sortedSellsticks) {
+            int uses = ItemUtils.getUses(sellstick);
+            if (usesSum + uses <= maxAmount) {
+                usesSum += uses;
+                inventory.remove(sellstick);
+            } else {
+                break;
+            }
         }
     }
 
-    // Create a new sellstick with a number of uses equalling usesSum
-    // public static ItemStack giveNewSellstick(int usesSum, Player player) {
-    //     Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
-    //     CommandUtils.giveSellStick(target, usesSum);
-    // }
+    // TODO: Fix identical sellsticks not merging properly in different slots
+    // TODO: Fix identical sellsticks not merging properly in same slot
+    // TODO: Add error handling
+    // TODO: Add message handling
+
+    // TODO: Add algorithm to charge the user for merging sellsticks
 }
