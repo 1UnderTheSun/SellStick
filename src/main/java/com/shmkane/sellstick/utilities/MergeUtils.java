@@ -19,7 +19,15 @@ public class MergeUtils {
         // Search through inventory to find all sellsticks and store in sellsticks list
         for (ItemStack item : inventory.getContents()) {
             if (item != null && ItemUtils.matchSellStickUUID(item)) {
-                sellsticks.add(item);
+                int amount = item.getAmount();
+
+                // Account for multiple sellsticks in same slot
+                for (int i = 0; i < amount; i++) {
+                    // Separates sellsticks in the same slot into individual items
+                    ItemStack singleSellstick = item.clone();
+                    singleSellstick.setAmount(1);
+                    sellsticks.add(singleSellstick);
+                }
             }
         }
 
@@ -63,8 +71,21 @@ public class MergeUtils {
         for (ItemStack sellstick : sortedSellsticks) {
             int uses = ItemUtils.getUses(sellstick);
             if (usesSum + uses <= maxAmount) {
-                usesSum += uses;
-                inventory.remove(sellstick);
+                usesSum += uses; // Sum the uses before removing the sellstick
+
+                for (ItemStack item : inventory.getContents()) {
+                    if (item != null && item.isSimilar(sellstick)) {
+                        int amount = item.getAmount();
+
+                        // Handle multiple sellsticks in same slot
+                        if (amount > 1) {
+                            item.setAmount(amount - 1); // Decrement stack size
+                        } else {
+                            inventory.remove(item);
+                        }
+                        break;
+                    }
+                }
             } else {
                 break;
             }
@@ -72,7 +93,6 @@ public class MergeUtils {
     }
 
     // TODO: Fix identical sellsticks not merging properly in different slots
-    // TODO: Fix identical sellsticks not merging properly in same slot
     // TODO: Add error handling
     // TODO: Add message handling
 
