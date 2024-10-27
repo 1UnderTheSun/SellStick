@@ -85,19 +85,25 @@ public class SellStickCommand implements TabExecutor {
         }
 
         // Merge Command
-        if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
+        if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {        
             // Get max amount of uses for a new sellstick
             int maxAmount = SellStick.getInstance().getMaxAmount();
 
             // Get player
-            Player target = SellStick.getInstance().getServer().getPlayer(args[1]);
+            Player player = (Player) sender;
 
             // Get all sellsticks in player inventory
-            ItemStack[] sellsticks = MergeUtils.searchInventory(target);
+            ItemStack[] sellsticks = MergeUtils.searchInventory(player);
 
             // Check if player has any sellsticks
             if (sellsticks.length == 0) {
-                ChatUtils.sendMsg(target, "<red>You have no sellsticks in your inventory!", true);
+                ChatUtils.sendMsg(player, "<red>You have no sellsticks in your inventory!", true);
+                return false;
+            }
+
+            // Check if player has at least 2 sellsticks
+            if (sellsticks.length == 1) {
+                ChatUtils.sendMsg(player, "<yellow>You need at least 2 sellsticks to merge!", true);
                 return false;
             }
 
@@ -108,10 +114,10 @@ public class SellStickCommand implements TabExecutor {
             int usesSum = MergeUtils.sumSellStickUses(sortedSellsticks, maxAmount);
 
             // Remove all sellsticks from player inventory
-            MergeUtils.removeSortedSellsticks(target, sortedSellsticks, maxAmount);
+            MergeUtils.removeSortedSellsticks(player, sortedSellsticks, maxAmount);
 
             // Give a new sellstick with a number of uses equalling usesSum
-            CommandUtils.giveSellStick(target, usesSum);
+            CommandUtils.giveSellStick(player, usesSum);
 
             // Check if all sellsticks were merged
             int totalUsesBeforeMerge = 0;
@@ -120,9 +126,9 @@ public class SellStickCommand implements TabExecutor {
             }
 
             if (totalUsesBeforeMerge == usesSum) {
-                ChatUtils.sendMsg(target, "<green>All sellsticks merged successfully!", true);
+                ChatUtils.sendMsg(player, "<green>All sellsticks merged successfully!", true);
             } else if (totalUsesBeforeMerge > usesSum) {
-                ChatUtils.sendMsg(target, "<red>Sellsticks exceed the maximum allowed merged uses.", true);
+                ChatUtils.sendMsg(player, "<red>Sellsticks exceed the maximum allowed merged uses.", true);
             }
         }
 

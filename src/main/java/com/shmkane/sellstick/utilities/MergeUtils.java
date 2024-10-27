@@ -92,8 +92,5 @@ public class MergeUtils {
         }
     }
 
-    // TODO: Add error handling
-    // TODO: Add message handling
-
     // TODO: Add algorithm to charge the user for merging sellsticks
 }
