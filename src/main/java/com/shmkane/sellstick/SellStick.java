@@ -4,23 +4,25 @@ import com.shmkane.sellstick.configs.PriceConfig;
 import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.events.PlayerListener;
 import com.shmkane.sellstick.utilities.ChatUtils;
+
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.logging.Level;
 
 /*
  * SellStick is a Minecraft plugin that allows customizable
  * selling of chest, shulker and barrel contents.
  *
- * @author shmkane, TreemanK, CodfishBender
+ * @author shmkane, TreemanK, CodfishBender, 1UnderTheSun
  */
 
 public class SellStick extends JavaPlugin {
 
     private static Economy econ = null;
-    public boolean ShopGUIEnabled, EssentialsEnabled = false;
+    public boolean ShopGUIEnabled, EssentialsEnabled, CommandAPIEnabled = false;
 
     SellstickConfig sellstickConfig;
     PriceConfig priceConfig;
@@ -35,13 +37,13 @@ public class SellStick extends JavaPlugin {
      * Create instance of Essentials
      * Hook SellStickCommand executor
      */
-    
+
     @Override
     public void onEnable() {
         plugin = this;
         // Don't load plugin if Vault is not present
         if (!setupEconomy()) {
-            ChatUtils.log(Level.SEVERE,SellstickConfig.prefix + " - Disabled due to no Vault dependency found!");
+            ChatUtils.log(Level.SEVERE, SellstickConfig.prefix + " - Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -109,4 +111,4 @@ public class SellStick extends JavaPlugin {
     public int getMaxAmount() {
         return sellstickConfig.getMaxAmount();
     }
-}   
+}
