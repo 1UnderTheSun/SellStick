@@ -4,6 +4,7 @@ import com.shmkane.sellstick.configs.SellstickConfig;
 import com.shmkane.sellstick.utilities.ChatUtils;
 import com.shmkane.sellstick.utilities.CommandUtils;
 import com.shmkane.sellstick.utilities.ConvertUtils;
+import com.shmkane.sellstick.utilities.ItemUtils;
 import com.shmkane.sellstick.utilities.MergeUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -85,8 +86,6 @@ public class SellStickCommand implements TabExecutor {
 
         // Merge Command
         if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
-            
-
             // Get max amount of uses for a new sellstick
             int maxAmount = SellStick.getInstance().getMaxAmount();
 
@@ -113,6 +112,18 @@ public class SellStickCommand implements TabExecutor {
 
             // Give a new sellstick with a number of uses equalling usesSum
             CommandUtils.giveSellStick(target, usesSum);
+
+            // Check if all sellsticks were merged
+            int totalUsesBeforeMerge = 0;
+            for (ItemStack sellstick : sortedSellsticks) {
+                totalUsesBeforeMerge += ItemUtils.getUses(sellstick);
+            }
+
+            if (totalUsesBeforeMerge == usesSum) {
+                ChatUtils.sendMsg(target, "<green>All sellsticks merged successfully!", true);
+            } else if (totalUsesBeforeMerge > usesSum) {
+                ChatUtils.sendMsg(target, "<red>Sellsticks exceed the maximum allowed merged uses.", true);
+            }
         }
 
         // Give Command

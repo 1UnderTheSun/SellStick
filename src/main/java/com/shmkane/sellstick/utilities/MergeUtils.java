@@ -92,7 +92,6 @@ public class MergeUtils {
         }
     }
 
-    // TODO: Fix identical sellsticks not merging properly in different slots
     // TODO: Add error handling
     // TODO: Add message handling
 
