@@ -85,6 +85,8 @@ public class SellStickCommand implements TabExecutor {
 
         // Merge Command
         if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
+            
+
             // Get max amount of uses for a new sellstick
             int maxAmount = SellStick.getInstance().getMaxAmount();
 
@@ -93,6 +95,12 @@ public class SellStickCommand implements TabExecutor {
 
             // Get all sellsticks in player inventory
             ItemStack[] sellsticks = MergeUtils.searchInventory(target);
+
+            // Check if player has any sellsticks
+            if (sellsticks.length == 0) {
+                ChatUtils.sendMsg(target, "<red>You have no sellsticks in your inventory!", true);
+                return false;
+            }
 
             // Sort sellsticks by their uses
             ItemStack[] sortedSellsticks = MergeUtils.sortSellsticksByUses(sellsticks);
