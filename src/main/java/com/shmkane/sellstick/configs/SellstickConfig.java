@@ -37,7 +37,7 @@ public class SellstickConfig extends Config {
         finiteLore = tryGetString(conf, "Item.FiniteLore", "<dark_red>%remaining% <red>remaining uses");
         infiniteLore = tryGetString(conf, "Item.InfiniteLore", "<dark_red>Infinite <red>uses!");
         glow = Boolean.parseBoolean(tryGetString(conf, "Item.Glow", String.valueOf(true)));
-        maxAmount = Integer.parseInt(tryGetString(conf, "Item.MaxAmount", "1000"));
+        maxAmount = Integer.parseInt(tryGetString(conf, "Item.MaxAmount", "2000"));
         sound = Boolean.parseBoolean(tryGetString(conf, "Item.UseSound", String.valueOf(true)));
         // Messages
         holdOneMessage = tryGetString(conf, "Messages.OnlyHoldOne", "<red>Please use 1 sell stick at a time!");

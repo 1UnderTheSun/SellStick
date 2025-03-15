@@ -35,7 +35,6 @@ public class CommandUtils {
             ItemUtils.glow(itemStack);
         }
 
-
         // Set NBT, uses and lore
         ItemUtils.setSellStick(itemStack);
         ItemStack finalItem = ItemUtils.setUses(itemStack, uses);

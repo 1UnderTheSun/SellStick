@@ -16,9 +16,18 @@ public class ChatUtils {
 
     // Send Messages
     public static void sendMsg(CommandSender sender, String string, boolean showPrefix) {
-        Component msg = MiniMessage.miniMessage().deserialize((showPrefix)?SellstickConfig.prefix.concat(string):string);
-         if (sender instanceof ConsoleCommandSender) log(Level.INFO, string);
-         else if (sender instanceof Player) sender.sendMessage(msg);
+        Component msg = MiniMessage.miniMessage()
+                .deserialize((showPrefix) ? SellstickConfig.prefix.concat(string) : string);
+        if (sender instanceof ConsoleCommandSender)
+            log(Level.INFO, string);
+        else if (sender instanceof Player)
+            sender.sendMessage(msg);
+    }
+    
+    // Send Action Bar Messages
+    public static void sendActionBar(CommandSender sender, String string) {
+        Component msg = MiniMessage.miniMessage().deserialize(string);
+        sender.sendActionBar(msg);
     }
 
     public static void sendCommandNotProperMessage(CommandSender sender) {

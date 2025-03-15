@@ -5,6 +5,7 @@ import com.shmkane.sellstick.utilities.ChatUtils;
 import com.shmkane.sellstick.utilities.CommandUtils;
 import com.shmkane.sellstick.utilities.ConvertUtils;
 import com.shmkane.sellstick.utilities.ItemUtils;
+import com.shmkane.sellstick.utilities.EventUtils;
 import com.shmkane.sellstick.utilities.MergeUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class SellStickCommand implements TabExecutor {
@@ -34,6 +36,9 @@ public class SellStickCommand implements TabExecutor {
             }
             if (sender.hasPermission("sellstick.merge")) {
                 commands.add("merge");
+            }
+            if (sender.hasPermission("sellstick.toggle")) {
+                commands.add("toggle");
             }
         } else if (args.length == 2) {
             for(Player player : SellStick.getInstance().getServer().getOnlinePlayers()){
@@ -85,7 +90,7 @@ public class SellStickCommand implements TabExecutor {
         }
 
         // Merge Command
-        if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {        
+        if (subCommand.equals("merge") && sender.hasPermission("sellstick.merge")) {
             // Get max amount of uses for a new sellstick
             int maxAmount = SellStick.getInstance().getMaxAmount();
 
@@ -113,23 +118,45 @@ public class SellStickCommand implements TabExecutor {
             // Sum the uses of all sellsticks
             int usesSum = MergeUtils.sumSellStickUses(sortedSellsticks, maxAmount);
 
-            // Remove all sellsticks from player inventory
-            MergeUtils.removeSortedSellsticks(player, sortedSellsticks, maxAmount);
-
-            // Give a new sellstick with a number of uses equalling usesSum
-            CommandUtils.giveSellStick(player, usesSum);
-
-            // Check if all sellsticks were merged
+            // Check if sellsticks exceed max cap.
             int totalUsesBeforeMerge = 0;
             for (ItemStack sellstick : sortedSellsticks) {
                 totalUsesBeforeMerge += ItemUtils.getUses(sellstick);
             }
 
             if (totalUsesBeforeMerge == usesSum) {
+                // Remove all sellsticks from player inventory
+                MergeUtils.removeSortedSellsticks(player, sortedSellsticks, maxAmount);
+
+                // Give a new sellstick with a number of uses equalling usesSum
+                CommandUtils.giveSellStick(player, usesSum);
+
                 ChatUtils.sendMsg(player, "<green>All sellsticks merged successfully!", true);
-            } else if (totalUsesBeforeMerge > usesSum) {
+
+                return true;
+            } else {
                 ChatUtils.sendMsg(player, "<red>Sellsticks exceed the maximum allowed merged uses.", true);
+                return false;
             }
+        }
+
+        // Toggle Command
+        if (subCommand.equals("toggle") && sender.hasPermission("sellstick.toggle")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("Only players can use this command.");
+                return false;
+            }
+
+            Player player = (Player) sender;
+            UUID playerUUID = player.getUniqueId();
+            EventUtils.togglePlayerPreference(playerUUID);
+
+            boolean newPreference = EventUtils.getPlayerPreference(playerUUID);
+            String message = newPreference ? "Sell messages will now be sent in chat."
+                    : "Sell messages will now be sent in the action bar.";
+            ChatUtils.sendMsg(player, message, true);
+
+            return true;
         }
 
         // Give Command

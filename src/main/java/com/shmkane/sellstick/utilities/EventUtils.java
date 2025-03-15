@@ -26,11 +26,25 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class EventUtils {
+    private static final HashMap<UUID, Boolean> playerPreferences = new HashMap<>();
+
+    // Get the player's preference for receiving sell messages (true for chat, false for action bar)
+    public static boolean getPlayerPreference(UUID playerUUID) {
+        return playerPreferences.getOrDefault(playerUUID, true); // Default to true (chat)
+    }
+
+    // Toggle the player's preference for receiving sell messages
+    public static void togglePlayerPreference(UUID playerUUID) {
+        boolean currentPreference = getPlayerPreference(playerUUID);
+        playerPreferences.put(playerUUID, !currentPreference);
+    }
 
     public static double calculateContainerWorth(PlayerInteractEvent event) {
 
@@ -112,7 +126,6 @@ public class EventUtils {
         return total;
     }
 
-
     // Checks if clicked block is on a chest, barrel or Shulker Box with a SellStick
     @Deprecated
     public static boolean didClickContainerWithSellStick(PlayerInteractEvent event) {
@@ -131,6 +144,8 @@ public class EventUtils {
 
     // Handles the SellStick in SaleEvent and PostSaleEvent - (Originally Made by MrGhetto)
     public static boolean saleEvent(Player player, ItemStack sellStick, double total) {
+        // Player preference for sell message
+        boolean sendInChat = getPlayerPreference(player.getUniqueId());
 
         // Subtract use
         if (!ItemUtils.isInfinite(sellStick)) ItemUtils.subtractUses(sellStick);
@@ -152,10 +167,17 @@ public class EventUtils {
         String[] send = SellstickConfig.sellMessage.split("\\\\n");
 
         for (String msg : send) {
-            ChatUtils.sendMsg(player, msg
-                    .replace("%uses%", String.valueOf(uses))
-                    .replace("%balance%", econ.format(response.balance))
-                    .replace("%price%", econ.format(response.amount)),true);
+            if (sendInChat) {
+                ChatUtils.sendMsg(player, msg
+                        .replace("%uses%", String.valueOf(uses))
+                        .replace("%balance%", econ.format(response.balance))
+                        .replace("%price%", econ.format(response.amount)), true);
+            } else {
+                ChatUtils.sendActionBar(player, msg
+                        .replace("%uses%", String.valueOf(uses))
+                        .replace("%balance%", econ.format(response.balance))
+                        .replace("%price%", econ.format(response.amount)));
+            }
         }
 
         // Build log message
@@ -165,7 +187,12 @@ public class EventUtils {
 
         if (uses <= 0) {
             player.getInventory().removeItem(sellStick);
-            ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
+
+            if (sendInChat) {
+                ChatUtils.sendMsg(player, SellstickConfig.brokenStick, true);
+            } else {
+                ChatUtils.sendActionBar(player, SellstickConfig.brokenStick);
+            }
         }
 
         return true;

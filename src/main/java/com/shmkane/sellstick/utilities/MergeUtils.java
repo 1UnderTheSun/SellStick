@@ -91,6 +91,4 @@ public class MergeUtils {
             }
         }
     }
-
-    // TODO: Add algorithm to charge the user for merging sellsticks
 }

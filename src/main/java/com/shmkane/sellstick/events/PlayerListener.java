@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class PlayerListener implements Listener {
 
@@ -21,14 +22,20 @@ public class PlayerListener implements Listener {
         Block block = event.getClickedBlock();
         ItemStack sellStick = player.getInventory().getItemInMainHand();
 
+        // Player preference for sell message
+        boolean sendInChat = EventUtils.getPlayerPreference(player.getUniqueId());
+
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;   // Must right-click
-        if (sellStick.getItemMeta() == null || block == null) return;                    // Return if empty item
+        if (sellStick.getItemMeta() == null || block == null) return;   // Return if empty item
 
         // Convert old sellticks
-        String name = player.getInventory().getItemInMainHand().getItemMeta().displayName().toString();
-        if (name.startsWith("§e✦ §e§lSellStick") || name.startsWith("§6§lSellStick")) {
-            ConvertUtils.convertSellStick(player);
-            return;
+        ItemMeta meta = sellStick.getItemMeta();
+        if (meta != null && meta.hasDisplayName()) {
+            String name = meta.displayName() != null ? meta.displayName().toString() : "";
+            if (name.startsWith("§e✦ §e§lSellStick") || name.startsWith("§6§lSellStick")) {
+                ConvertUtils.convertSellStick(player);
+                return;
+            }
         }
 
         // Replace unstackable sellstick with stackable one
@@ -70,14 +77,22 @@ public class PlayerListener implements Listener {
 
         // Nothing worth selling
         if (total <= 0) {
-            ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
+            if (sendInChat) {
+                ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
+            } else {
+                ChatUtils.sendActionBar(player, SellstickConfig.nothingWorth);
+            }
             event.setCancelled(true);
             return;
         }
 
         // Sell the items
         if (!EventUtils.saleEvent(player, sellStick, total)) {
-            ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
+            if (sendInChat) {
+                ChatUtils.sendMsg(player, SellstickConfig.nothingWorth, true);
+            } else {
+                ChatUtils.sendActionBar(player, SellstickConfig.nothingWorth);
+            }
             event.setCancelled(true);
             return;
         }
