@@ -43,6 +43,7 @@ public class ConvertUtils {
 
         if (nbt.contains("UNSPECIFIC_META:{meta-type=UNSPECIFIC, display-name={\"text\":\"SellStick\"")) {
             ChatUtils.sendMsg(player, "<red>This is not an old SellStick! ", true);
+            return;
         }
 
         if (!nbt.contains("✦") && !nbt.contains("SellStick")) {
