@@ -6,7 +6,7 @@ import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-// import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,10 +21,10 @@ public class ItemUtils {
 
     // Make an ItemStack Glow
     public static ItemStack glow(ItemStack itemStack) {
+        itemStack.addUnsafeEnchantment(Enchantment.FORTUNE, 1);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(itemMeta);
-        // itemStack.addUnsafeEnchantment(Enchantment.FORTUNE, 1);
         return itemStack;
     }
 
