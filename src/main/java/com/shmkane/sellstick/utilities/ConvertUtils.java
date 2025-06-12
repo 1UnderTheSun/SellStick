@@ -39,8 +39,13 @@ public class ConvertUtils {
         }
 
         ItemStack sellstick = player.getInventory().getItemInMainHand();
-        String name = MiniMessage.miniMessage().serialize(sellstick.getItemMeta().displayName());
-        if (!name.startsWith("§e✦ §e§lSellStick") && !name.startsWith("§6§lSellStick")) {
+        String nbt = sellstick.getItemMeta().toString();
+
+        if (nbt.contains("UNSPECIFIC_META:{meta-type=UNSPECIFIC, display-name={\"text\":\"SellStick\"")) {
+            ChatUtils.sendMsg(player, "<red>This is not an old SellStick! ", true);
+        }
+
+        if (!nbt.contains("✦") && !nbt.contains("SellStick")) {
             ChatUtils.sendMsg(player, "<red>This is not an old SellStick! ", true);
             Bukkit.getLogger().info(MiniMessage.miniMessage().serialize(sellstick.getItemMeta().displayName()));
             return;
@@ -58,10 +63,10 @@ public class ConvertUtils {
         ItemMeta itemMeta = sellstick.getItemMeta();
         List<Component> sellStickLore = itemMeta.lore();
 
-        if (sellStickLore == null || sellStickLore.size() < 3) {
-            ChatUtils.sendMsg(player, "<red>SellStick does not have enough lore lines!", true);
-            return;
-        }
+        // if (sellStickLore == null || sellStickLore.size() < 3) {
+        //     ChatUtils.sendMsg(player, "<red>SellStick does not have enough lore lines!", true);
+        //     return;
+        // }
 
         String numberLine = MiniMessage.miniMessage().serialize(sellStickLore.get(2));
 
