@@ -39,9 +39,6 @@ public class CommandUtils {
         ItemUtils.setSellStick(itemStack);
         ItemStack finalItem = ItemUtils.setUses(itemStack, uses);
 
-        // // Remove any enchantments (if any)
-        // itemStack.removeEnchantment(Enchantment.FORTUNE);
-
         // Add to inventory
         target.getInventory().addItem(finalItem);
     }
